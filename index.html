@@ -846,7 +846,7 @@ function renderCabs(){
 
     <div class="price-lines">
      Extra hour: <b>${money(v[3])}</b><br>
-     Distance: <b>${money(v[4])} / 100 km</b>
+     Distance: <b>${money(v[4])} / km</b>
     </div>
    </div>
   </div>
@@ -893,7 +893,7 @@ function showSummary(){
 
  const cabBase=v[2]*state.days;
  const extra=v[3]*state.extraHours*state.days;
- const distance=Math.ceil(state.distance/100)*v[4]*state.days;
+ const distance=state.distance*v[4];
  const total=hotelTotal+cabBase+extra+distance;
 
  document.getElementById("summaryCity").textContent=c.name;

@@ -59,7 +59,37 @@ h1,h2,h3{margin:0}
 .primary{background:var(--accent);color:white;border:0;padding:16px 22px;cursor:pointer;font-size:12px;font-weight:700;margin-top:25px;border-radius:999px}
 .primary:hover{opacity:.9}
 .place-grid,.hotel-grid,.cab-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.place,.hotel,.cab{border:1px solid var(--line);background:var(--white);cursor:pointer;transition:.2s;border-radius:24px;overflow:hidden}
+.place,.hotel,.cab{
+  position:relative;
+  border:1px solid var(--line);
+  background:var(--white);
+  cursor:pointer;
+  transition:.2s;
+  border-radius:24px;
+  overflow:hidden;
+}
+
+.selection-tick{
+  position:absolute;
+  top:14px;
+  right:14px;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  background:#1769e0;
+  color:white;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  font-weight:700;
+  z-index:999;
+  box-shadow:0 4px 12px rgba(23,105,224,.35);
+}
+
+.selection-tick.show{
+  display:flex !important;
+}
 .place.selected,.hotel.selected,.cab.selected{outline:2px solid var(--accent)}
 .place img,.hotel img{width:100%;height:190px;object-fit:cover}
 .place-body,.hotel-body,.cab-body{padding:18px}
@@ -100,10 +130,19 @@ h1,h2,h3{margin:0}
 <div class="app">
 <header>
   <div class="logo"><i>✦</i> Safario</div>
-  <div class="esc-hint">Press Esc to go back</div><div class="steps">
-    <span id="s1" class="active" onclick="goStep(1)">01 Destination</span><span id="s2" onclick="goStep(2)">02 Build your days</span><span id="s3" onclick="goStep(3)">03 Stay & ride</span><span id="s4" onclick="goStep(4)">04 Confirm</span>
+  <div class="esc-hint">Press Esc to go back</div>
+  <div class="steps">
+    <span id="s1" class="active" onclick="goStep(1)">01 Destination</span>
+    <span id="s2" onclick="goStep(2)">02 Build your days</span>
+    <span id="s3" onclick="goStep(3)">03 Stay & ride</span>
+    <span id="s4" onclick="goStep(4)">04 Confirm</span>
   </div>
-  <select class="language" id="language" aria-label="Language"><option>English</option><option>हिन्दी</option><option>ਪੰਜਾਬੀ</option></select><div class="saved">Saved trips <b>0</b></div>
+  <select class="language" id="language" aria-label="Language">
+    <option>English</option>
+    <option>हिन्दी</option>
+    <option>ਪੰਜਾਬੀ</option>
+  </select>
+  <div class="saved">Saved trips <b>0</b></div>
 </header>
 
 <main>
@@ -116,17 +155,21 @@ h1,h2,h3{margin:0}
     </div>
     <div class="note">✦ Handpicked stays.<br>Local moments.<br>One simple plan.</div>
   </div>
+
   <div class="summary-card" style="margin-bottom:18px">
     <div class="eyebrow">Start your trip</div>
     <div class="date-row">
-      <div class="field"><label>Your name</label><input id="userName" placeholder="Enter your name"></div>
+      <div class="field">
+        <label>Your name</label>
+        <input id="userName" placeholder="Enter your name">
+      </div>
     </div>
+
     <div class="eyebrow">Who are you travelling with?</div>
     <div class="card-row" id="travellersHome"></div>
     <div id="personHome"></div>
     <button class="primary" onclick="startTrip()">Start planning →</button>
   </div>
-
 </section>
 
 <section id="destinations" class="panel">
@@ -148,10 +191,18 @@ h1,h2,h3{margin:0}
       <div class="eyebrow">Build your trip</div>
       <div class="section-head"><h2 id="buildTitle"></h2></div>
       <p class="sub" id="buildDesc"></p>
+
       <div class="date-row" style="margin-top:18px">
-        <div class="field"><label>Start date</label><input id="startDate" type="date" onchange="state.startDate=this.value;updateTripDates()"></div>
-        <div class="field"><label>End date</label><input id="endDate" type="date" onchange="state.endDate=this.value;updateTripDates()"></div>
+        <div class="field">
+          <label>Start date</label>
+          <input id="startDate" type="date" onchange="state.startDate=this.value;updateTripDates()">
+        </div>
+        <div class="field">
+          <label>End date</label>
+          <input id="endDate" type="date" onchange="state.endDate=this.value;updateTripDates()">
+        </div>
       </div>
+
       <div class="mini-note" id="tripDates" style="margin-top:12px"></div>
       <div id="personBuilder"></div>
 
@@ -161,57 +212,116 @@ h1,h2,h3{margin:0}
       <div class="days">
         <div class="eyebrow">Your stay</div>
         <p class="sub" id="recommend"></p>
-        <div class="day-control"><button class="circle" onclick="changeDays(-1)">−</button><div><div class="day-number" id="dayNumber">3</div><div class="small" style="text-align:center">days</div></div><button class="circle" onclick="changeDays(1)">+</button></div>
+
+        <div class="day-control">
+          <button class="circle" onclick="changeDays(-1)">−</button>
+          <div>
+            <div class="day-number" id="dayNumber">3</div>
+            <div class="small" style="text-align:center">days</div>
+          </div>
+          <button class="circle" onclick="changeDays(1)">+</button>
+        </div>
+
         <input class="range" id="dayRange" type="range" min="2" max="5" value="3" oninput="setDays(+this.value)">
-        <div class="minmax"><span id="minDays"></span><span id="maxDays"></span></div>
+        <div class="minmax">
+          <span id="minDays"></span>
+          <span id="maxDays"></span>
+        </div>
+
         <button class="primary" onclick="showPlaces()">Show my places →</button>
       </div>
     </div>
+
     <div class="side-img"><img id="buildImage"></div>
   </div>
 </section>
 
 <section id="places" class="panel">
   <button class="back" onclick="goStep(2)">← Back</button>
-  <div class="section-head"><div><div class="eyebrow">Your places</div><h2>Make it yours.</h2></div><div class="small" id="placeCount"></div></div>
-  <p class="sub" style="max-width:650px;margin-bottom:30px">Pick the places you want to see. We'll shape them around your number of days.</p>
-  <div class="place-grid" id="placeGrid"></div><div class="map-card"><div class="map-label">Map · your selected destination</div><iframe id="mapFrame" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">Your places</div>
+      <h2>Make it yours.</h2>
+    </div>
+    <div class="small" id="placeCount"></div>
+  </div>
+
+  <p class="sub" style="max-width:650px;margin-bottom:30px">
+    Pick the places you want to see. We'll shape them around your number of days.
+  </p>
+
+  <div class="place-grid" id="placeGrid"></div>
+
+  <div class="map-card">
+    <div class="map-label">Map · your selected destination</div>
+    <iframe id="mapFrame" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  </div>
+
   <button class="primary" onclick="showHotels()">Continue to stays →</button>
 </section>
 
 <section id="hotels" class="panel">
   <button class="back" onclick="goStep(2)">← Back</button>
-  <div class="section-head"><div><div class="eyebrow">Your stay</div><h2>Find your home base.</h2></div></div>
+
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">Your stay</div>
+      <h2>Find your home base.</h2>
+    </div>
+  </div>
+
   <div class="hotel-grid" id="hotelGrid"></div>
+
   <div class="skip-stay">
     <button class="skip-link" onclick="skipHotel()">I'll find my stay myself →</button>
     <span>You can add your hotel later.</span>
   </div>
+
   <button class="primary" onclick="showCabs()">Choose my ride →</button>
 </section>
 
 <section id="cabs" class="panel">
   <button class="back" onclick="goStep(3)">← Back</button>
-  <div class="section-head"><div><div class="eyebrow">Your ride</div><h2>Get around your way.</h2></div></div>
-  <p class="sub" style="max-width:650px">Every option includes a driver for 8 hours. Extra hours and distance are added transparently.</p>
+
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">Your ride</div>
+      <h2>Get around your way.</h2>
+    </div>
+  </div>
+
+  <p class="sub" style="max-width:650px">
+    Every option includes a driver for 8 hours. Extra hours and distance are added transparently.
+  </p>
+
   <div class="cab-grid" id="cabGrid"></div>
+
   <div class="extra-hours">
     <div>
       <div class="eyebrow">Extra hours</div>
       <div class="mini-note" id="extraHourPrice">Select a cab to see the extra-hour price.</div>
     </div>
+
     <div class="extra-control">
       <button class="circle" onclick="changeExtraHours(-1)" aria-label="Remove extra hour">−</button>
-      <div class="extra-value"><strong id="extraHoursNumber">0</strong><span>hr</span></div>
+      <div class="extra-value">
+        <strong id="extraHoursNumber">0</strong>
+        <span>hr</span>
+      </div>
       <button class="circle" onclick="changeExtraHours(1)" aria-label="Add extra hour">+</button>
     </div>
   </div>
+
   <button class="primary" onclick="showSummary()">Review my trip →</button>
 </section>
 
 <section id="summary" class="panel">
   <button class="back" onclick="goStep(3)">← Back</button>
-  <div class="eyebrow">Almost there</div><div class="section-head"><h2>Your trip, together.</h2></div>
+
+  <div class="eyebrow">Almost there</div>
+  <div class="section-head"><h2>Your trip, together.</h2></div>
+
   <div class="summary">
     <div>
       <div class="summary-card">
@@ -224,6 +334,7 @@ h1,h2,h3{margin:0}
         <div class="summary-row"><span>Distance charges</span><span id="summaryDistance"></span></div>
       </div>
     </div>
+
     <div class="summary-card">
       <div class="eyebrow">Estimated total</div>
       <div class="total"><span>₹</span><span id="total"></span></div>
@@ -234,13 +345,13 @@ h1,h2,h3{margin:0}
 </section>
 
 <section id="success" class="panel">
- <div class="success">
-  <div class="mark">✓</div>
-  <div class="eyebrow">Trip saved</div>
-  <h2>You're going places.</h2>
-  <p class="sub" id="successText"></p>
-  <button class="primary" onclick="location.reload()">Plan another trip</button>
- </div>
+  <div class="success">
+    <div class="mark">✓</div>
+    <div class="eyebrow">Trip saved</div>
+    <h2>You're going places.</h2>
+    <p class="sub" id="successText"></p>
+    <button class="primary" onclick="location.reload()">Plan another trip</button>
+  </div>
 </section>
 </main>
 </div>
@@ -248,7 +359,9 @@ h1,h2,h3{margin:0}
 <script>
 const cities = {
  amritsar:{
-  name:"Amritsar", state:"Punjab, India", desc:"Golden streets, living history & unforgettable food.",
+  name:"Amritsar",
+  state:"Punjab, India",
+  desc:"Golden streets, living history & unforgettable food.",
   image:"asr.jpg",
   min:2,max:5,rec:3,
   interests:["Religious","Food","History","Nature","Shopping","Nightlife","Family-friendly"],
@@ -266,13 +379,16 @@ const cities = {
    ["Grand Amritsar","4.7 ★","₹4,800/night","https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80"]
   ],
   cabs:[
-   ["City Sedan","🚘",800,250,6, "Comfortable for couples & small groups"],
-   ["Premium SUV","🚙",1200,350,8, "Extra room for family & luggage"],
-   ["Family Van","🚐",1600,450,10, "Best for larger groups"]
+   ["City Sedan","🚘",800,250,6,"Comfortable for couples & small groups"],
+   ["Premium SUV","🚙",1200,350,8,"Extra room for family & luggage"],
+   ["Family Van","🚐",1600,450,10,"Best for larger groups"]
   ]
  },
+
  jalandhar:{
-  name:"Jalandhar", state:"Punjab, India", desc:"Warm hospitality, heritage and a slower Punjabi rhythm.",
+  name:"Jalandhar",
+  state:"Punjab, India",
+  desc:"Warm hospitality, heritage and a slower Punjabi rhythm.",
   image:"jal.jpg",
   min:2,max:4,rec:3,
   interests:["Heritage","Food","Nature","Shopping","Family-friendly","Sports"],
@@ -294,8 +410,11 @@ const cities = {
    ["Family Van","🚐",1500,420,10,"Best for larger groups"]
   ]
  },
+
  ludhiana:{
-  name:"Ludhiana", state:"Punjab, India", desc:"Craft, culture, shopping and the energy of Punjab's industrial heart.",
+  name:"Ludhiana",
+  state:"Punjab, India",
+  desc:"Craft, culture, shopping and the energy of Punjab's industrial heart.",
   image:"ludhiana.jpg",
   min:1,max:4,rec:2,
   interests:["Shopping","Food","Culture","Nature","Family-friendly","Nightlife"],
@@ -319,27 +438,63 @@ const cities = {
  }
 };
 
-let state={city:null,days:3,traveller:"Solo traveller",persons:1,userName:"",interests:[],places:[],hotel:null,cab:null,extraHours:0,distance:0,startDate:"",endDate:"",maxStep:1,hotelSkipped:false};
+let state={
+ city:null,
+ days:3,
+ traveller:"Solo traveller",
+ persons:1,
+ userName:"",
+ interests:[],
+ places:[],
+ hotel:null,
+ cab:null,
+ extraHours:0,
+ distance:0,
+ startDate:"",
+ endDate:"",
+ maxStep:1,
+ hotelSkipped:false
+};
 
 const money=n=>"₹"+n.toLocaleString("en-IN");
+
 function show(id){
  document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));
- const panel=document.getElementById(id); if(!panel)return;
+ const panel=document.getElementById(id);
+ if(!panel)return;
+
  panel.classList.add("active");
- const map={home:0,destinations:1,builder:2,places:2,hotels:3,cabs:3,summary:4,success:4};
+
+ const map={
+  home:0,
+  destinations:1,
+  builder:2,
+  places:2,
+  hotels:3,
+  cabs:3,
+  summary:4,
+  success:4
+ };
+
  const n=map[id]||1;
- if(n>0) state.maxStep=Math.max(state.maxStep,n);
+
+ if(n>0)state.maxStep=Math.max(state.maxStep,n);
+
  for(let i=1;i<=4;i++){
   const el=document.getElementById("s"+i);
   el.classList.toggle("active",i===n);
   el.classList.toggle("disabled",i>state.maxStep);
  }
+
  window.scrollTo({top:0,behavior:"smooth"});
 }
+
 function backStep(){
  const active=document.querySelector(".panel.active");
  if(!active)return;
+
  const id=active.id;
+
  if(id==="destinations"){show("home");return}
  if(id==="builder"){show("destinations");return}
  if(id==="places"){show("builder");return}
@@ -348,46 +503,102 @@ function backStep(){
  if(id==="summary"){show("cabs");return}
  if(id==="success"){show("summary");return}
 }
+
 function goStep(n){
  if(n>state.maxStep)return;
- if(n===1){renderCities();show("destinations");return}
- if(n===2){if(!state.city){renderCities();show("destinations");return}show("builder");return}
- if(n===3){if(!state.city){renderCities();show("destinations");return}show("hotels");return}
- if(n===4){if(!state.city){renderCities();show("destinations");return}showSummary()}
+
+ if(n===1){
+  renderCities();
+  show("destinations");
+  return;
+ }
+
+ if(n===2){
+  if(!state.city){
+   renderCities();
+   show("destinations");
+   return;
+  }
+  show("builder");
+  return;
+ }
+
+ if(n===3){
+  if(!state.city){
+   renderCities();
+   show("destinations");
+   return;
+  }
+  show("hotels");
+  return;
+ }
+
+ if(n===4){
+  if(!state.city){
+   renderCities();
+   show("destinations");
+   return;
+  }
+  showSummary();
+ }
 }
+
 document.addEventListener("keydown",function(e){
  if(e.key==="Escape"){
-   const active=document.querySelector(".panel.active");
-   if(active && active.id!=="home" && active.id!=="destinations"){
-     e.preventDefault();
-     backStep();
-   }else if(active && active.id==="destinations"){
-     e.preventDefault();
-     show("home");
-   }
+  const active=document.querySelector(".panel.active");
+
+  if(active && active.id!=="home" && active.id!=="destinations"){
+   e.preventDefault();
+   backStep();
+  }
+  else if(active && active.id==="destinations"){
+   e.preventDefault();
+   show("home");
+  }
  }
 });
+
 function updateTripDates(){
  const d1=state.startDate,d2=state.endDate;
- document.getElementById("tripDates").textContent=d1&&d2?`${d1} → ${d2} · ${state.persons} ${state.persons===1?'person':'people'}`:`Choose your dates · ${state.persons} ${state.persons===1?'person':'people'}`;
+
+ document.getElementById("tripDates").textContent=
+ d1&&d2
+ ?`${d1} → ${d2} · ${state.persons} ${state.persons===1?'person':'people'}`
+ :`Choose your dates · ${state.persons} ${state.persons===1?'person':'people'}`;
 }
+
 function renderCities(){
  const grid=document.getElementById("destinationGrid");
  if(!grid)return;
+
  grid.innerHTML="";
+
  Object.entries(cities).forEach(([id,c])=>{
-   const card=document.createElement("button");
-   card.type="button";
-   card.className="city";
-   card.dataset.city=id;
-   card.innerHTML=`<img src="${c.image}" alt="${c.name}"><div class="city-info"><small>${c.state}</small><h2>${c.name}</h2><p>${c.desc}</p></div><div class="arrow">→</div>`;
-   card.addEventListener("click",()=>selectCity(id));
-   grid.appendChild(card);
+  const card=document.createElement("button");
+
+  card.type="button";
+  card.className="city";
+  card.dataset.city=id;
+
+  card.innerHTML=`
+   <img src="${c.image}" alt="${c.name}">
+   <div class="city-info">
+    <small>${c.state}</small>
+    <h2>${c.name}</h2>
+    <p>${c.desc}</p>
+   </div>
+   <div class="arrow">→</div>
+  `;
+
+  card.addEventListener("click",()=>selectCity(id));
+  grid.appendChild(card);
  });
 }
+
 function selectCity(id){
  const c=cities[id];
  if(!c)return;
+
  state.city=id;
  state.days=c.rec;
  state.interests=[];
@@ -407,97 +618,316 @@ function selectCity(id){
 
  if(title)title.textContent=c.name;
  if(desc)desc.textContent=c.desc;
- if(image){image.src=c.image;image.alt=c.name;}
- if(range){range.min=c.min;range.max=c.max;range.value=c.rec;}
+ if(image){
+  image.src=c.image;
+  image.alt=c.name;
+ }
+
+ if(range){
+  range.min=c.min;
+  range.max=c.max;
+  range.value=c.rec;
+ }
+
  if(min)min.textContent="Min "+c.min+" days";
  if(max)max.textContent="Max "+c.max+" days";
- if(recommend)recommend.textContent=`We recommend ${c.rec} days for the full experience.`;
 
- // The city is now definitely selected before opening the next page.
+ if(recommend)recommend.textContent=
+ `We recommend ${c.rec} days for the full experience.`;
+
  state.maxStep=Math.max(state.maxStep,2);
+
  show("builder");
  setDays(c.rec);
  renderInterests();
  renderTravellers();
  updateTripDates();
 }
+
 function renderTravellers(){
  const a=["Solo traveller","Couple","Family / Friends"];
- const html=a.map(x=>`<button class="choice ${state.traveller===x?"selected":""}" onclick="state.traveller='${x}';state.persons=${x==='Solo traveller'?1:x==='Couple'?2:Math.max(4,state.persons)};renderTravellers()"><strong>${x}</strong><span>${x==="Family / Friends"?"Choose how many people":"A trip shaped around you"}</span></button>`).join("");
- document.getElementById("travellers").innerHTML=html;
+
+ const html=a.map(x=>`
+  <button class="choice ${state.traveller===x?"selected":""}"
+   onclick="state.traveller='${x}';state.persons=${x==='Solo traveller'?1:x==='Couple'?2:Math.max(4,state.persons)};renderTravellers()">
+   <strong>${x}</strong>
+   <span>${x==="Family / Friends"?"Choose how many people":"A trip shaped around you"}</span>
+  </button>
+ `).join("");
+
  document.getElementById("travellersHome").innerHTML=html;
  renderPersons();
 }
+
 function renderPersons(){
  const isGroup=state.traveller==="Family / Friends";
- const html=isGroup?`<div style="margin-top:12px"><div class="eyebrow">Number of persons</div><div class="person-control"><button class="circle" onclick="state.persons=Math.max(3,state.persons-1);renderPersons()">−</button><div class="count">${state.persons}</div><button class="circle" onclick="state.persons=Math.min(12,state.persons+1);renderPersons()">+</button><span class="mini-note">people · hotel room count and price will adjust</span></div></div>`:`<div class="mini-note" style="margin:12px 0 20px">${state.persons} ${state.persons===1?'person':'people'} · hotel pricing will be based on your group size.</div>`;
+
+ const html=isGroup
+ ?`
+  <div style="margin-top:12px">
+   <div class="eyebrow">Number of persons</div>
+   <div class="person-control">
+    <button class="circle" onclick="state.persons=Math.max(3,state.persons-1);renderPersons()">−</button>
+    <div class="count">${state.persons}</div>
+    <button class="circle" onclick="state.persons=Math.min(12,state.persons+1);renderPersons()">+</button>
+    <span class="mini-note">people · hotel room count and price will adjust</span>
+   </div>
+  </div>
+ `
+ :`
+  <div class="mini-note" style="margin:12px 0 20px">
+   ${state.persons} ${state.persons===1?'person':'people'} · hotel pricing will be based on your group size.
+  </div>
+ `;
+
  document.getElementById("personHome").innerHTML=html;
  document.getElementById("personBuilder").innerHTML=html;
 }
+
 function startTrip(){
  state.userName=document.getElementById("userName").value.trim()||"Traveller";
- if(!state.traveller){alert("Choose who you are travelling with first.");return}
+
+ if(!state.traveller){
+  alert("Choose who you are travelling with first.");
+  return;
+ }
+
  state.maxStep=Math.max(state.maxStep,1);
+
  renderCities();
  show("destinations");
 }
+
 function renderInterests(){
- document.getElementById("interestList").innerHTML=cities[state.city].interests.map(x=>`<button class="chip ${state.interests.includes(x)?"selected":""}" onclick="toggleInterest('${x}')">${x}</button>`).join("");
+ document.getElementById("interestList").innerHTML=
+ cities[state.city].interests.map(x=>`
+  <button class="chip ${state.interests.includes(x)?"selected":""}"
+   onclick="toggleInterest('${x}')">
+   ${x}
+  </button>
+ `).join("");
 }
-function toggleInterest(x){state.interests=state.interests.includes(x)?state.interests.filter(y=>y!==x):[...state.interests,x];renderInterests()}
-function setDays(n){const c=cities[state.city];state.days=Math.max(c.min,Math.min(c.max,n));document.getElementById("dayNumber").textContent=state.days;document.getElementById("dayRange").value=state.days}
-function changeDays(n){setDays(state.days+n)}
+
+function toggleInterest(x){
+ state.interests=state.interests.includes(x)
+  ?state.interests.filter(y=>y!==x)
+  :[...state.interests,x];
+
+ renderInterests();
+}
+
+function setDays(n){
+ const c=cities[state.city];
+
+ state.days=Math.max(c.min,Math.min(c.max,n));
+
+ document.getElementById("dayNumber").textContent=state.days;
+ document.getElementById("dayRange").value=state.days;
+}
+
+function changeDays(n){
+ setDays(state.days+n);
+}
+
 function showPlaces(){
- const c=cities[state.city]; state.places=c.places.slice(0,Math.min(c.places.length,Math.max(3,state.days+2))).map((p,i)=>i<Math.min(3,state.days+1)?i:null).filter(x=>x!==null);
- renderPlaces();show("places");
+ const c=cities[state.city];
+
+ state.places=
+ c.places
+  .slice(0,Math.min(c.places.length,Math.max(3,state.days+2)))
+  .map((p,i)=>i<Math.min(3,state.days+1)?i:null)
+  .filter(x=>x!==null);
+
+ renderPlaces();
+ show("places");
 }
+
 function renderPlaces(){
- const c=cities[state.city];document.getElementById("placeCount").textContent=`${state.places.length} selected`;
- document.getElementById("mapFrame").src=`https://www.google.com/maps?q=${encodeURIComponent(c.name+', Punjab, India')}&output=embed`;
- document.getElementById("placeGrid").innerHTML=c.places.map((p,i)=>`<div class="place ${state.places.includes(i)?"selected":""}" onclick="togglePlace(${i})"><img src="${p[2]}" alt="${p[0]}"><div class="place-body"><div class="eyebrow">${p[1]}</div><h3>${p[0]}</h3><div class="meta">${p[3]}</div><span class="tag">Visit ${p[4]}</span></div></div>`).join("");
+ const c=cities[state.city];
+
+ document.getElementById("placeCount").textContent=
+ `${state.places.length} selected`;
+
+ document.getElementById("mapFrame").src=
+ `https://www.google.com/maps?q=${encodeURIComponent(c.name+', Punjab, India')}&output=embed`;
+
+ document.getElementById("placeGrid").innerHTML=
+ c.places.map((p,i)=>`
+  <div class="place ${state.places.includes(i)?"selected":""}"
+   onclick="togglePlace(${i})">
+
+   <div class="selection-tick ${state.places.includes(i)?"show":""}">✓</div>
+
+   <img src="${p[2]}" alt="${p[0]}">
+
+   <div class="place-body">
+    <div class="eyebrow">${p[1]}</div>
+    <h3>${p[0]}</h3>
+    <div class="meta">${p[3]}</div>
+    <span class="tag">Visit ${p[4]}</span>
+   </div>
+  </div>
+ `).join("");
 }
-function togglePlace(i){state.places=state.places.includes(i)?state.places.filter(x=>x!==i):[...state.places,i];renderPlaces()}
-function showHotels(){if(!state.places.length){alert("Pick at least one place first.");return}state.hotelSkipped=false;renderHotels();show("hotels")}
-function skipHotel(){state.hotelSkipped=true;state.hotel=null;showCabs()}
+
+function togglePlace(i){
+ state.places=state.places.includes(i)
+  ?state.places.filter(x=>x!==i)
+  :[...state.places,i];
+
+ renderPlaces();
+}
+
+function showHotels(){
+ if(!state.places.length){
+  alert("Pick at least one place first.");
+  return;
+ }
+
+ state.hotelSkipped=false;
+ renderHotels();
+ show("hotels");
+}
+
+function skipHotel(){
+ state.hotelSkipped=true;
+ state.hotel=null;
+ showCabs();
+}
+
 function renderHotels(){
  const c=cities[state.city];
- document.getElementById("hotelGrid").innerHTML=c.hotels.map((h,i)=>`<div class="hotel ${state.hotel===i?"selected":""}" onclick="state.hotel=${i};renderHotels()"><img src="${h[3]}" alt="${h[0]}"><div class="hotel-body"><div class="eyebrow">${h[1]}</div><h3>${h[0]}</h3><div class="meta">Comfortable stay · Central location</div><div class="price">${h[2]}</div></div></div>`).join("");
+
+ document.getElementById("hotelGrid").innerHTML=
+ c.hotels.map((h,i)=>`
+  <div class="hotel ${state.hotel===i?"selected":""}"
+   onclick="state.hotel=${i};renderHotels()">
+
+   <div class="selection-tick ${state.hotel===i?"show":""}">✓</div>
+
+   <img src="${h[3]}" alt="${h[0]}">
+
+   <div class="hotel-body">
+    <div class="eyebrow">${h[1]}</div>
+    <h3>${h[0]}</h3>
+    <div class="meta">Comfortable stay · Central location</div>
+    <div class="price">${h[2]}</div>
+   </div>
+  </div>
+ `).join("");
 }
-function showCabs(){if(state.hotel===null&&!state.hotelSkipped){alert("Choose a hotel or use “I’ll find my stay myself”.");return}renderCabs();show("cabs")}
+
+function showCabs(){
+ if(state.hotel===null&&!state.hotelSkipped){
+  alert("Choose a hotel or use “I’ll find my stay myself”.");
+  return;
+ }
+
+ renderCabs();
+ show("cabs");
+}
+
 function renderCabs(){
  const c=cities[state.city];
- document.getElementById("cabGrid").innerHTML=c.cabs.map((v,i)=>`<div class="cab ${state.cab===i?"selected":""}" onclick="state.cab=${i};state.extraHours=0;renderCabs()"><div class="cab-icon">${v[1]}</div><div class="cab-body"><h3>${v[0]}</h3><div class="meta">${v[5]}</div><div class="price">${money(v[2])} / 8 hrs</div><div class="price-lines">Extra hour: <b>${money(v[3])}</b><br>Distance: <b>${money(v[4])} / 100 km</b></div></div></div>`).join("");
+
+ document.getElementById("cabGrid").innerHTML=
+ c.cabs.map((v,i)=>`
+  <div class="cab ${state.cab===i?"selected":""}"
+   onclick="state.cab=${i};state.extraHours=0;renderCabs()">
+
+   <div class="selection-tick ${state.cab===i?"show":""}">✓</div>
+
+   <div class="cab-icon">${v[1]}</div>
+
+   <div class="cab-body">
+    <h3>${v[0]}</h3>
+    <div class="meta">${v[5]}</div>
+    <div class="price">${money(v[2])} / 8 hrs</div>
+
+    <div class="price-lines">
+     Extra hour: <b>${money(v[3])}</b><br>
+     Distance: <b>${money(v[4])} / 100 km</b>
+    </div>
+   </div>
+  </div>
+ `).join("");
+
  const selected=c.cabs[state.cab];
- document.getElementById("extraHoursNumber").textContent=state.extraHours;
- document.getElementById("extraHourPrice").textContent=selected?`${money(selected[3])} per additional hour · charged per trip day`:"Select a cab to see the extra-hour price.";
+
+ document.getElementById("extraHoursNumber").textContent=
+ state.extraHours;
+
+ document.getElementById("extraHourPrice").textContent=
+ selected
+ ?`${money(selected[3])} per additional hour · charged per trip day`
+ :"Select a cab to see the extra-hour price.";
 }
+
 function changeExtraHours(delta){
- if(state.cab===null){alert("Choose a cab first.");return}
- state.extraHours=Math.max(0,Math.min(4,state.extraHours+delta));renderCabs();
+ if(state.cab===null){
+  alert("Choose a cab first.");
+  return;
+ }
+
+ state.extraHours=Math.max(0,Math.min(4,state.extraHours+delta));
+ renderCabs();
 }
+
 function showSummary(){
- if(state.cab===null){alert("Choose a cab first.");return}
- const c=cities[state.city],v=c.cabs[state.cab],h=state.hotel===null?null:c.hotels[state.hotel];
+ if(state.cab===null){
+  alert("Choose a cab first.");
+  return;
+ }
+
+ const c=cities[state.city],
+       v=c.cabs[state.cab],
+       h=state.hotel===null?null:c.hotels[state.hotel];
+
  state.distance=state.days*80;
+
  const rooms=Math.max(1,Math.ceil(state.persons/2));
- const hotelTotal=h?parseInt(h[2].replace(/[^\d]/g,""))*(state.days-1)*rooms:0;
- const cabBase=v[2]*state.days,extra=v[3]*state.extraHours*state.days,distance=Math.ceil(state.distance/100)*v[4]*state.days;
+
+ const hotelTotal=h
+  ?parseInt(h[2].replace(/[^\d]/g,""))*(state.days-1)*rooms
+  :0;
+
+ const cabBase=v[2]*state.days;
+ const extra=v[3]*state.extraHours*state.days;
+ const distance=Math.ceil(state.distance/100)*v[4]*state.days;
  const total=hotelTotal+cabBase+extra+distance;
+
  document.getElementById("summaryCity").textContent=c.name;
- document.getElementById("summaryMeta").textContent=`${state.userName} · ${state.days} days · ${state.days-1} nights · ${state.persons} ${state.persons===1?"person":"people"}`;
- document.getElementById("summaryPlaces").textContent=state.places.length+" selected";
- document.getElementById("summaryHotel").textContent=h?h[0]+" · "+money(hotelTotal)+` (${rooms} room${rooms>1?"s":""})`:"I’ll find my stay myself";
- document.getElementById("summaryCab").textContent=v[0]+" · "+money(cabBase);
+
+ document.getElementById("summaryMeta").textContent=
+ `${state.userName} · ${state.days} days · ${state.days-1} nights · ${state.persons} ${state.persons===1?"person":"people"}`;
+
+ document.getElementById("summaryPlaces").textContent=
+ state.places.length+" selected";
+
+ document.getElementById("summaryHotel").textContent=
+ h
+ ?h[0]+" · "+money(hotelTotal)+` (${rooms} room${rooms>1?"s":""})`
+ :"I’ll find my stay myself";
+
+ document.getElementById("summaryCab").textContent=
+ v[0]+" · "+money(cabBase);
+
  document.getElementById("summaryExtra").textContent=money(extra);
  document.getElementById("summaryDistance").textContent=money(distance);
  document.getElementById("total").textContent=total.toLocaleString("en-IN");
+
  show("summary");
 }
+
 function confirmTrip(){
- document.getElementById("successText").textContent=`Your ${state.days}-day ${cities[state.city].name} trip has been saved for ${state.userName}, with ${state.persons} ${state.persons===1?"person":"people"}, ${state.places.length} places, your selected hotel and cab.`;
+ document.getElementById("successText").textContent=
+ `Your ${state.days}-day ${cities[state.city].name} trip has been saved for ${state.userName}, with ${state.persons} ${state.persons===1?"person":"people"}, ${state.places.length} places, your selected hotel and cab.`;
+
  show("success");
 }
-renderCities(); renderTravellers();
+
+renderCities();
+renderTravellers();
 </script>
 </body>
 </html>

@@ -711,6 +711,124 @@ h1,h2,h3{margin:0}
  border-radius:999px
 }
 
+
+/* =========================
+   SOS EMERGENCY UI
+========================= */
+
+.sos-button{
+ position:fixed;
+ right:22px;
+ bottom:22px;
+ z-index:1000;
+ border:0;
+ background:#c62828;
+ color:#fff;
+ font-weight:800;
+ letter-spacing:.04em;
+ padding:13px 18px;
+ border-radius:999px;
+ cursor:pointer;
+ box-shadow:0 10px 26px rgba(198,40,40,.28);
+}
+
+.sos-button:hover{
+ transform:translateY(-1px);
+}
+
+.sos-overlay{
+ position:fixed;
+ inset:0;
+ background:rgba(10,25,45,.55);
+ display:none;
+ align-items:center;
+ justify-content:center;
+ padding:20px;
+ z-index:1100;
+ backdrop-filter:blur(6px);
+}
+
+.sos-overlay.open{
+ display:flex;
+}
+
+.sos-modal{
+ width:min(460px,100%);
+ background:#fff;
+ border:1px solid var(--line);
+ border-radius:28px;
+ padding:28px;
+ box-shadow:0 24px 70px rgba(16,42,67,.25);
+}
+
+.sos-modal h2{
+ font-family:"Playfair Display",serif;
+ font-size:38px;
+ margin-bottom:8px;
+}
+
+.sos-modal p{
+ color:var(--muted);
+ font-size:13px;
+ line-height:1.55;
+ margin:0 0 22px;
+}
+
+.sos-actions{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:12px;
+}
+
+.sos-action{
+ border:1px solid var(--line);
+ background:#fff;
+ padding:18px;
+ border-radius:20px;
+ cursor:pointer;
+ text-align:left;
+ transition:.2s;
+}
+
+.sos-action:hover{
+ border-color:#c62828;
+ background:#fff7f7;
+ transform:translateY(-1px);
+}
+
+.sos-action strong{
+ display:block;
+ font-size:18px;
+ margin-bottom:5px;
+}
+
+.sos-action span{
+ color:var(--muted);
+ font-size:11px;
+}
+
+.sos-close{
+ margin-top:16px;
+ width:100%;
+ border:0;
+ background:var(--paper2);
+ color:var(--ink);
+ padding:13px 16px;
+ border-radius:999px;
+ cursor:pointer;
+ font-weight:700;
+}
+
+@media(max-width:520px){
+ .sos-actions{
+  grid-template-columns:1fr;
+ }
+ .sos-button{
+  right:14px;
+  bottom:14px;
+ }
+}
+
 @media(max-width:850px){
  header{
   padding:0 16px;
@@ -766,6 +884,67 @@ h1,h2,h3{margin:0}
 </head>
 
 <body>
+
+<button
+ class="sos-button"
+ id="sosButton"
+ type="button"
+ onclick="openSOS()"
+ aria-label="Emergency SOS"
+>
+ SOS
+</button>
+
+<div
+ class="sos-overlay"
+ id="sosOverlay"
+ role="dialog"
+ aria-modal="true"
+ aria-labelledby="sosTitle"
+>
+ <div class="sos-modal">
+
+  <div class="eyebrow">Emergency assistance</div>
+
+  <h2 id="sosTitle">Need help?</h2>
+
+  <p id="sosText">
+   Don't worry, we got you 😊<br>
+   Choose the emergency service you need and Safario will help you call.
+  </p>
+
+  <div class="sos-actions">
+
+   <button
+    class="sos-action"
+    type="button"
+    onclick="callEmergency('police')"
+   >
+    <strong>👮 Police</strong>
+    <span>Call 100</span>
+   </button>
+
+   <button
+    class="sos-action"
+    type="button"
+    onclick="callEmergency('ambulance')"
+   >
+    <strong>🚑 Ambulance</strong>
+    <span>Call 102</span>
+   </button>
+
+  </div>
+
+  <button
+   class="sos-close"
+   type="button"
+   onclick="closeSOS()"
+  >
+   Cancel
+  </button>
+
+ </div>
+</div>
 
 <div class="app">
 
@@ -1473,7 +1652,6 @@ h1,h2,h3{margin:0}
 
 <script>
 
-
 const cities = {
 
  amritsar:{
@@ -1492,8 +1670,7 @@ const cities = {
    "Nature",
    "Shopping",
    "Nightlife",
-   "Family-friendly",
-   "Heritage"
+   "Family-friendly"
   ],
 
   places:[
@@ -1850,241 +2027,9 @@ let state={
 };
 
 
-const LANG = {
- English: {
-  destination:"Destination", buildDays:"Build your days", stayRide:"Stay & ride", confirm:"Confirm",
-  curated:"Curated travel · Your way", heroTitle:"Go somewhere", heroTitle2:"worth remembering.",
-  heroDesc:"Tell us where, when and who is coming. We'll shape the trip from there.",
-  handpicked:"✦ Handpicked stays.", localMoments:"Local moments.", onePlan:"One simple plan.",
-  startTrip:"Start your trip", travellerQuestion:"Who are you travelling with?",
-  yourName:"Your name", namePlaceholder:"Enter your name", solo:"Solo traveller", couple:"Couple", familyFriends:"Family / Friends",
-  familyHint:"Choose how many people", travellerHint:"A trip shaped around you", startPlanning:"Start planning →",
-  destinationEyebrow:"01 · Destination", destinationTitle:"Where do you want", destinationTitle2:"to go?", destinationDesc:"Choose a city and we'll build your trip around it.", back:"← Back",
-  buildTrip:"Build your trip", startDate:"Start date", endDate:"End date", pullsYou:"What pulls you in?", yourStay:"Your stay",
-  recommendedDays:"We recommend {days} days for the full experience.", days:"days", showPlaces:"Show my places →", min:"Min {days} days", max:"Max {days} days",
-  chooseDates:"Choose your dates · {days} days · {people}", datePeople:"{start} → {end} · {days} days · {people}",
-  yourPlaces:"Your places", makeItYours:"Make it yours.", placesDesc:"Pick the places you want to see. We'll shape them around your number of days.",
-  mapLabel:"Map · your selected destination", continueStays:"Continue to stays →", selected:"selected",
-  yourStayEyebrow:"Your stay", findHome:"Find your home base.", skipHotel:"I'll find my stay myself →", addHotelLater:"You can add your hotel later.",
-  continueRide:"Choose my ride →", yourRide:"Your ride", getAround:"Get around your way.", rideDesc:"Every option includes a driver for 8 hours. Extra hours and distance are added transparently.",
-  extraHours:"Extra hours", selectCab:"Select a cab to see the extra-hour price.", extraHourInfo:"{price} per additional hour · charged per trip day", hour:"hr", reviewTrip:"Review my trip →",
-  almostThere:"Almost there", tripTogether:"Your trip, together.", dates:"Dates", travellers:"Travellers", places:"Places", hotel:"Hotel", cab:"Cab",
-  extraHoursRow:"Extra hours", distanceCharges:"Distance charges", estimatedTotal:"Estimated total", estimateNote:"Prototype estimate. Final vendor availability and taxes can be added later.",
-  bookTrip:"Book my trip", tripSaved:"Trip saved", goingPlaces:"You're going places.", planAnother:"Plan another trip",
-  daysNights:"{days} days · {nights} nights", nights:"nights", notSelected:"Dates not selected", person:"person", people:"people",
-  hotelInfo:"{rate} / night · per person · per day", hotelSummary:"{name} · {total} ({persons} × {days} days)",
-  cabSummary:"{name} · {base}", additionalHour:"Extra hour:", distance:"Distance:", per8:" / 8 hrs", perKm:" / km",
-  comfortable:"Comfortable for couples & small groups", familyLuggage:"Extra room for family & luggage", largerGroups:"Best for larger groups",
-  centralStay:"Comfortable stay · Central location", placesCount:"{count} selected", visit:"Visit {time}",
-  soloPersonNote:"{count} {word} · hotel pricing will be based on your group size.", groupPeople:"people · hotel price adjusts per person",
-  tripSavedText:"Your {days}-day {city} trip has been saved for {name}, with {persons} {peopleWord}, {places} places, your selected hotel and cab.",
-  languages:{},
-  Religious:"Religious", Food:"Food", History:"History", Nature:"Nature", Shopping:"Shopping", Nightlife:"Nightlife",
-  "Family-friendly":"Family-friendly", Heritage:"Heritage", Culture:"Culture", Sports:"Sports", Spiritual:"Spiritual", Family:"Family", Experience:"Experience",
-  "Solo traveller":"Solo traveller", Couple:"Couple", "Family / Friends":"Family / Friends",
-  "Comfortable for couples & small groups":"Comfortable for couples & small groups",
-  "Extra room for family & luggage":"Extra room for family & luggage",
-  "Best for larger groups":"Best for larger groups"
- },
- Hindi: {}, Punjabi: {}
-};
-
-LANG["हिन्दी"] = {
- ...LANG.English,
- destination:"गंतव्य", buildDays:"अपने दिन तय करें", stayRide:"रहना और यात्रा", confirm:"पुष्टि करें",
- curated:"सुविचारित यात्रा · आपके तरीके से", heroTitle:"ऐसी जगह जाएँ", heroTitle2:"जो याद रह जाए।",
- heroDesc:"हमें बताइए कहाँ, कब और कौन साथ आ रहा है। हम उसी के अनुसार आपकी यात्रा तैयार करेंगे।",
- handpicked:"✦ चुने हुए ठहरने के विकल्प।", localMoments:"स्थानीय अनुभव।", onePlan:"एक आसान योजना।",
- startTrip:"अपनी यात्रा शुरू करें", travellerQuestion:"आप किसके साथ यात्रा कर रहे हैं?", yourName:"आपका नाम", namePlaceholder:"अपना नाम दर्ज करें",
- solo:"अकेले यात्री", couple:"जोड़ा", familyFriends:"परिवार / दोस्त", familyHint:"कितने लोग हैं चुनें", travellerHint:"आपके लिए तैयार की गई यात्रा", startPlanning:"योजना शुरू करें →",
- destinationEyebrow:"01 · गंतव्य", destinationTitle:"आप कहाँ", destinationTitle2:"जाना चाहते हैं?", destinationDesc:"एक शहर चुनें और हम उसके अनुसार आपकी यात्रा तैयार करेंगे।", back:"← वापस",
- buildTrip:"अपनी यात्रा बनाएँ", startDate:"शुरुआत की तारीख", endDate:"अंतिम तारीख", pullsYou:"आपको क्या पसंद है?", yourStay:"आपका प्रवास",
- recommendedDays:"पूरे अनुभव के लिए हम {days} दिन सुझाते हैं।", days:"दिन", showPlaces:"मेरी जगहें दिखाएँ →", min:"कम से कम {days} दिन", max:"अधिकतम {days} दिन",
- chooseDates:"अपनी तारीखें चुनें · {days} दिन · {people}", datePeople:"{start} → {end} · {days} दिन · {people}",
- yourPlaces:"आपकी जगहें", makeItYours:"इसे अपना बनाएँ।", placesDesc:"वे जगहें चुनें जिन्हें आप देखना चाहते हैं। हम उन्हें आपके दिनों के अनुसार व्यवस्थित करेंगे।",
- mapLabel:"मानचित्र · आपका चुना हुआ गंतव्य", continueStays:"ठहरने के लिए आगे बढ़ें →", selected:"चयनित",
- yourStayEyebrow:"आपका ठहराव", findHome:"अपना ठिकाना चुनें।", skipHotel:"मैं अपना होटल खुद ढूँढूँगा →", addHotelLater:"आप बाद में होटल जोड़ सकते हैं।", continueRide:"अपनी सवारी चुनें →",
- yourRide:"आपकी सवारी", getAround:"अपने तरीके से घूमें।", rideDesc:"हर विकल्प में 8 घंटे का ड्राइवर शामिल है। अतिरिक्त घंटे और दूरी का शुल्क स्पष्ट रूप से जोड़ा जाता है।",
- extraHours:"अतिरिक्त घंटे", selectCab:"अतिरिक्त घंटे का शुल्क देखने के लिए कैब चुनें।", extraHourInfo:"{price} प्रति अतिरिक्त घंटा · हर यात्रा दिन के लिए", hour:"घंटा", reviewTrip:"अपनी यात्रा देखें →",
- almostThere:"बस तैयार हैं", tripTogether:"आपकी पूरी यात्रा।", dates:"तारीखें", travellers:"यात्री", places:"जगहें", hotel:"होटल", cab:"कैब", extraHoursRow:"अतिरिक्त घंटे", distanceCharges:"दूरी शुल्क",
- estimatedTotal:"अनुमानित कुल", estimateNote:"प्रोटोटाइप अनुमान। अंतिम विक्रेता उपलब्धता और कर बाद में जोड़े जा सकते हैं।", bookTrip:"मेरी यात्रा बुक करें", tripSaved:"यात्रा सेव हो गई", goingPlaces:"आप सफर पर निकल रहे हैं।", planAnother:"एक और यात्रा बनाएँ",
- nights:"रातें", notSelected:"तारीखें नहीं चुनी गईं", person:"व्यक्ति", people:"लोग", hotelInfo:"{rate} / रात · प्रति व्यक्ति · प्रति दिन",
- hotelSummary:"{name} · {total} ({persons} × {days} दिन)", centralStay:"आरामदायक ठहराव · केंद्रीय स्थान", placesCount:"{count} चयनित", visit:"देखें {time}",
- comfortable:"जोड़े और छोटे समूहों के लिए आरामदायक", familyLuggage:"परिवार और सामान के लिए अधिक जगह", largerGroups:"बड़े समूहों के लिए सबसे अच्छा",
- tripSavedText:"आपकी {days} दिन की {city} यात्रा {name} के लिए सेव हो गई है, जिसमें {persons} {peopleWord}, {places} जगहें, चुना हुआ होटल और कैब शामिल हैं।",
- Religious:"धार्मिक", Food:"खाना", History:"इतिहास", Nature:"प्रकृति", Shopping:"खरीदारी", Nightlife:"नाइटलाइफ़", "Family-friendly":"परिवार के लिए उपयुक्त", Heritage:"विरासत", Culture:"संस्कृति", Sports:"खेल", Spiritual:"आध्यात्मिक", Family:"परिवार", Experience:"अनुभव",
- "Solo traveller":"अकेले यात्री", Couple:"जोड़ा", "Family / Friends":"परिवार / दोस्त"
-};
-
-LANG["ਪੰਜਾਬੀ"] = {
- ...LANG.English,
- destination:"ਮੰਜ਼ਿਲ", buildDays:"ਆਪਣੇ ਦਿਨ ਚੁਣੋ", stayRide:"ਰਹਿਣਾ ਅਤੇ ਸਫ਼ਰ", confirm:"ਪੁਸ਼ਟੀ ਕਰੋ",
- curated:"ਸੁਚੱਜੀ ਯਾਤਰਾ · ਤੁਹਾਡੇ ਤਰੀਕੇ ਨਾਲ", heroTitle:"ਅਜਿਹੀ ਥਾਂ ਜਾਓ", heroTitle2:"ਜੋ ਯਾਦ ਰਹਿ ਜਾਵੇ।",
- heroDesc:"ਦੱਸੋ ਕਿੱਥੇ, ਕਦੋਂ ਅਤੇ ਕੌਣ ਨਾਲ ਆ ਰਿਹਾ ਹੈ। ਅਸੀਂ ਉਸੇ ਅਨੁਸਾਰ ਤੁਹਾਡੀ ਯਾਤਰਾ ਤਿਆਰ ਕਰਾਂਗੇ।",
- handpicked:"✦ ਚੁਣੇ ਹੋਏ ਰਹਿਣ ਦੇ ਵਿਕਲਪ।", localMoments:"ਸਥਾਨਕ ਤਜਰਬੇ।", onePlan:"ਇੱਕ ਸੌਖੀ ਯੋਜਨਾ।",
- startTrip:"ਆਪਣੀ ਯਾਤਰਾ ਸ਼ੁਰੂ ਕਰੋ", travellerQuestion:"ਤੁਸੀਂ ਕਿਸ ਨਾਲ ਯਾਤਰਾ ਕਰ ਰਹੇ ਹੋ?", yourName:"ਤੁਹਾਡਾ ਨਾਮ", namePlaceholder:"ਆਪਣਾ ਨਾਮ ਲਿਖੋ",
- solo:"ਇਕੱਲਾ ਯਾਤਰੀ", couple:"ਜੋੜਾ", familyFriends:"ਪਰਿਵਾਰ / ਦੋਸਤ", familyHint:"ਕਿੰਨੇ ਲੋਕ ਹਨ ਚੁਣੋ", travellerHint:"ਤੁਹਾਡੇ ਲਈ ਬਣਾਈ ਯਾਤਰਾ", startPlanning:"ਯੋਜਨਾ ਸ਼ੁਰੂ ਕਰੋ →",
- destinationEyebrow:"01 · ਮੰਜ਼ਿਲ", destinationTitle:"ਤੁਸੀਂ ਕਿੱਥੇ", destinationTitle2:"ਜਾਣਾ ਚਾਹੁੰਦੇ ਹੋ?", destinationDesc:"ਇੱਕ ਸ਼ਹਿਰ ਚੁਣੋ ਅਤੇ ਅਸੀਂ ਉਸ ਦੇ ਅਨੁਸਾਰ ਤੁਹਾਡੀ ਯਾਤਰਾ ਤਿਆਰ ਕਰਾਂਗੇ।", back:"← ਵਾਪਸ",
- buildTrip:"ਆਪਣੀ ਯਾਤਰਾ ਬਣਾਓ", startDate:"ਸ਼ੁਰੂ ਮਿਤੀ", endDate:"ਅੰਤ ਮਿਤੀ", pullsYou:"ਤੁਹਾਨੂੰ ਕੀ ਪਸੰਦ ਹੈ?", yourStay:"ਤੁਹਾਡਾ ਰਹਿਣਾ",
- recommendedDays:"ਪੂਰੇ ਤਜਰਬੇ ਲਈ ਅਸੀਂ {days} ਦਿਨ ਸੁਝਾਉਂਦੇ ਹਾਂ।", days:"ਦਿਨ", showPlaces:"ਮੇਰੀਆਂ ਥਾਵਾਂ ਦਿਖਾਓ →", min:"ਘੱਟੋ-ਘੱਟ {days} ਦਿਨ", max:"ਵੱਧ ਤੋਂ ਵੱਧ {days} ਦਿਨ",
- chooseDates:"ਆਪਣੀਆਂ ਮਿਤੀਆਂ ਚੁਣੋ · {days} ਦਿਨ · {people}", datePeople:"{start} → {end} · {days} ਦਿਨ · {people}",
- yourPlaces:"ਤੁਹਾਡੀਆਂ ਥਾਵਾਂ", makeItYours:"ਇਸਨੂੰ ਆਪਣਾ ਬਣਾਓ।", placesDesc:"ਉਹ ਥਾਵਾਂ ਚੁਣੋ ਜਿੱਥੇ ਤੁਸੀਂ ਜਾਣਾ ਚਾਹੁੰਦੇ ਹੋ। ਅਸੀਂ ਉਨ੍ਹਾਂ ਨੂੰ ਤੁਹਾਡੇ ਦਿਨਾਂ ਅਨੁਸਾਰ ਤਿਆਰ ਕਰਾਂਗੇ।",
- mapLabel:"ਨਕਸ਼ਾ · ਤੁਹਾਡੀ ਚੁਣੀ ਮੰਜ਼ਿਲ", continueStays:"ਰਹਿਣ ਲਈ ਅੱਗੇ ਵਧੋ →", selected:"ਚੁਣੀਆਂ", yourStayEyebrow:"ਤੁਹਾਡਾ ਰਹਿਣਾ", findHome:"ਆਪਣਾ ਠਿਕਾਣਾ ਚੁਣੋ।",
- skipHotel:"ਮੈਂ ਆਪਣਾ ਹੋਟਲ ਖੁਦ ਲੱਭਾਂਗਾ →", addHotelLater:"ਤੁਸੀਂ ਹੋਟਲ ਬਾਅਦ ਵਿੱਚ ਜੋੜ ਸਕਦੇ ਹੋ।", continueRide:"ਆਪਣੀ ਸਵਾਰੀ ਚੁਣੋ →", yourRide:"ਤੁਹਾਡੀ ਸਵਾਰੀ", getAround:"ਆਪਣੇ ਤਰੀਕੇ ਨਾਲ ਘੁੰਮੋ।",
- rideDesc:"ਹਰ ਵਿਕਲਪ ਵਿੱਚ 8 ਘੰਟਿਆਂ ਦਾ ਡਰਾਈਵਰ ਸ਼ਾਮਲ ਹੈ। ਵਾਧੂ ਘੰਟਿਆਂ ਅਤੇ ਦੂਰੀ ਦਾ ਖਰਚਾ ਸਪੱਸ਼ਟ ਤੌਰ 'ਤੇ ਜੋੜਿਆ ਜਾਂਦਾ ਹੈ।", extraHours:"ਵਾਧੂ ਘੰਟੇ",
- selectCab:"ਵਾਧੂ ਘੰਟੇ ਦਾ ਭਾਅ ਵੇਖਣ ਲਈ ਕੈਬ ਚੁਣੋ।", extraHourInfo:"{price} ਪ੍ਰਤੀ ਵਾਧੂ ਘੰਟਾ · ਹਰ ਯਾਤਰਾ ਦਿਨ ਲਈ", hour:"ਘੰਟਾ", reviewTrip:"ਆਪਣੀ ਯਾਤਰਾ ਵੇਖੋ →",
- almostThere:"ਲਗਭਗ ਤਿਆਰ", tripTogether:"ਤੁਹਾਡੀ ਪੂਰੀ ਯਾਤਰਾ।", dates:"ਮਿਤੀਆਂ", travellers:"ਯਾਤਰੀ", places:"ਥਾਵਾਂ", hotel:"ਹੋਟਲ", cab:"ਕੈਬ", extraHoursRow:"ਵਾਧੂ ਘੰਟੇ", distanceCharges:"ਦੂਰੀ ਦਾ ਖਰਚਾ",
- estimatedTotal:"ਅੰਦਾਜ਼ਨ ਕੁੱਲ", estimateNote:"ਪ੍ਰੋਟੋਟਾਈਪ ਅਨੁਮਾਨ। ਅੰਤਿਮ ਵਿਕਰੇਤਾ ਉਪਲਬਧਤਾ ਅਤੇ ਟੈਕਸ ਬਾਅਦ ਵਿੱਚ ਜੋੜੇ ਜਾ ਸਕਦੇ ਹਨ।", bookTrip:"ਮੇਰੀ ਯਾਤਰਾ ਬੁੱਕ ਕਰੋ", tripSaved:"ਯਾਤਰਾ ਸੇਵ ਹੋ ਗਈ", goingPlaces:"ਹੁਣ ਤੁਸੀਂ ਸਫ਼ਰ ਲਈ ਤਿਆਰ ਹੋ।", planAnother:"ਹੋਰ ਯਾਤਰਾ ਬਣਾਓ",
- nights:"ਰਾਤਾਂ", notSelected:"ਮਿਤੀਆਂ ਨਹੀਂ ਚੁਣੀਆਂ", person:"ਵਿਅਕਤੀ", people:"ਲੋਕ", hotelInfo:"{rate} / ਰਾਤ · ਪ੍ਰਤੀ ਵਿਅਕਤੀ · ਪ੍ਰਤੀ ਦਿਨ", hotelSummary:"{name} · {total} ({persons} × {days} ਦਿਨ)",
- centralStay:"ਆਰਾਮਦਾਇਕ ਰਹਿਣਾ · ਕੇਂਦਰੀ ਸਥਾਨ", placesCount:"{count} ਚੁਣੀਆਂ", visit:"ਵੇਖੋ {time}",
- comfortable:"ਜੋੜਿਆਂ ਅਤੇ ਛੋਟੇ ਸਮੂਹਾਂ ਲਈ ਆਰਾਮਦਾਇਕ", familyLuggage:"ਪਰਿਵਾਰ ਅਤੇ ਸਮਾਨ ਲਈ ਵਧੇਰੇ ਜਗ੍ਹਾ", largerGroups:"ਵੱਡੇ ਸਮੂਹਾਂ ਲਈ ਸਭ ਤੋਂ ਵਧੀਆ",
- tripSavedText:"ਤੁਹਾਡੀ {days} ਦਿਨਾਂ ਦੀ {city} ਯਾਤਰਾ {name} ਲਈ ਸੇਵ ਹੋ ਗਈ ਹੈ, ਜਿਸ ਵਿੱਚ {persons} {peopleWord}, {places} ਥਾਵਾਂ, ਚੁਣਿਆ ਹੋਇਆ ਹੋਟਲ ਅਤੇ ਕੈਬ ਸ਼ਾਮਲ ਹਨ।",
- Religious:"ਧਾਰਮਿਕ", Food:"ਖਾਣਾ", History:"ਇਤਿਹਾਸ", Nature:"ਕੁਦਰਤ", Shopping:"ਖਰੀਦਦਾਰੀ", Nightlife:"ਨਾਈਟਲਾਈਫ਼", "Family-friendly":"ਪਰਿਵਾਰ ਲਈ ਢੁੱਕਵਾਂ", Heritage:"ਵਿਰਾਸਤ", Culture:"ਸੱਭਿਆਚਾਰ", Sports:"ਖੇਡਾਂ", Spiritual:"ਆਧਿਆਤਮਿਕ", Family:"ਪਰਿਵਾਰ", Experience:"ਤਜਰਬਾ",
- "Solo traveller":"ਇਕੱਲਾ ਯਾਤਰੀ", Couple:"ਜੋੜਾ", "Family / Friends":"ਪਰਿਵਾਰ / ਦੋਸਤ"
-};
-
-let currentLanguage = "English";
-
-function T(key, vars={}){
- const dict=LANG[currentLanguage] || LANG.English;
- let text=dict[key] ?? LANG.English[key] ?? key;
- return String(text).replace(/\{(\w+)\}/g,(_,k)=>vars[k] ?? "");
-}
-
 const money=n =>
  "₹"+Number(n||0).toLocaleString("en-IN");
 
-
-/* =========================
-   LANGUAGE
-========================= */
-
-function translateStaticUI(){
- const textMap={
-  ".esc-hint":"escHint",
-  ".saved":"savedTrips",
-  "#home .hero .eyebrow":"curated",
-  "#home .hero .sub":"heroDesc",
-  "#home .summary-card > .eyebrow:first-child":"startTrip",
-  "#home .summary-card .card-row + .eyebrow":"travellerQuestion",
-  "#destinations .hero .eyebrow":"destinationEyebrow",
-  "#destinations .hero .sub":"destinationDesc",
-  "#builder .builder > div > .eyebrow":"buildTrip",
-  "#builder .field:nth-of-type(1) label":"startDate",
-  "#builder .field:nth-of-type(2) label":"endDate",
-  "#builder .days .eyebrow":"yourStay",
-  "#places .section-head .eyebrow":"yourPlaces",
-  "#places .section-head h2":"makeItYours",
-  "#places > .sub":"placesDesc",
-  "#places .map-label":"mapLabel",
-  "#hotels .section-head .eyebrow":"yourStayEyebrow",
-  "#hotels .section-head h2":"findHome",
-  "#hotels .skip-stay span":"addHotelLater",
-  "#cabs .section-head .eyebrow":"yourRide",
-  "#cabs .section-head h2":"getAround",
-  "#cabs > .sub":"rideDesc",
-  "#cabs .extra-hours .eyebrow":"extraHours",
-  "#summary > .eyebrow":"almostThere",
-  "#summary .section-head h2":"tripTogether",
-  "#summary .summary-card .eyebrow":"estimatedTotal",
-  "#success .eyebrow":"tripSaved",
-  "#success h2":"goingPlaces"
- };
-
- Object.entries(textMap).forEach(([selector,key])=>{
-  const el=document.querySelector(selector);
-  if(el) el.textContent=T(key);
- });
-
- const homeH1=document.querySelector("#home .hero h1");
- if(homeH1){
-  homeH1.innerHTML=`${T("heroTitle")}<br><em>${T("heroTitle2")}</em>`;
- }
-
- const destinationH1=document.querySelector("#destinations .hero h1");
- if(destinationH1){
-  destinationH1.innerHTML=`${T("destinationTitle")}<br><em>${T("destinationTitle2")}</em>`;
- }
-
- const note=document.querySelector("#home .note");
- if(note){
-  note.innerHTML=`${T("handpicked")}<br>${T("localMoments")}<br>${T("onePlan")}`;
- }
-
- const userName=document.getElementById("userName");
- if(userName) userName.placeholder=T("namePlaceholder");
-
- const userNameLabel=userName?.closest(".field")?.querySelector("label");
- if(userNameLabel) userNameLabel.textContent=T("yourName");
-
- const backButtons=document.querySelectorAll("button.back");
- backButtons.forEach(button=>button.textContent=T("back"));
-
- const stepKeys=["destination","buildDays","stayRide","confirm"];
- [1,2,3,4].forEach((n,i)=>{
-  const el=document.getElementById("s"+n);
-  if(el) el.textContent=`0${n} ${T(stepKeys[i])}`;
- });
-
- // Translate buttons by their action, never by their current text.
- // This prevents Hindi/Punjabi text from becoming the "source"
- // when switching back to English.
- document.querySelectorAll("button.primary").forEach(button=>{
-  const action=(button.getAttribute("onclick")||"").trim();
-
-  if(action.includes("startTrip")) button.textContent=T("startPlanning");
-  else if(action.includes("showPlaces")) button.textContent=T("showPlaces");
-  else if(action.includes("showHotels")) button.textContent=T("continueStays");
-  else if(action.includes("showCabs")) button.textContent=T("continueRide");
-  else if(action.includes("showSummary")) button.textContent=T("reviewTrip");
-  else if(action.includes("confirmTrip")) button.textContent=T("bookTrip");
-  else if(action.includes("location.reload")) button.textContent=T("planAnother");
- });
-
- const skipButton=document.querySelector(".skip-link");
- if(skipButton) skipButton.textContent=T("skipHotel");
-
- const daySmall=document.querySelector("#builder .days .small");
- if(daySmall) daySmall.textContent=T("days");
-
- const summaryLabels={
-  "summaryDates":"dates",
-  "summaryTravellers":"travellers",
-  "summaryPlaces":"places",
-  "summaryHotel":"hotel",
-  "summaryCab":"cab",
-  "summaryExtra":"extraHoursRow",
-  "summaryDistance":"distanceCharges"
- };
-
- Object.entries(summaryLabels).forEach(([id,key])=>{
-  const value=document.getElementById(id);
-  const label=value?.parentElement?.querySelector("span:first-child");
-  if(label) label.textContent=T(key);
- });
-
- const totalNote=document.querySelector("#summary .summary-card .small");
- if(totalNote) totalNote.textContent=T("estimateNote");
-
- const extraPrice=document.getElementById("extraHourPrice");
- if(extraPrice && state.cab===null){
-  extraPrice.textContent=T("selectCab");
- }
-}
-
-function setLanguage(lang){
- currentLanguage=lang;
- translateStaticUI();
- renderTravellers();
- if(state.city){
-  renderInterests();
-  renderPlaces();
-  renderHotels();
-  renderCabs();
- }
- updateTripDates();
- if(document.querySelector("#summary.active")) showSummary();
-}
 
 /* =========================
    NAVIGATION
@@ -2479,7 +2424,11 @@ function updateTripDates(){
  const d2=state.endDate;
 
  const people=
-  `${state.persons} ${state.persons===1?T("person"):T("people")}`;
+  `${state.persons} ${
+   state.persons===1
+    ?"person"
+    :"people"
+  }`;
 
  const element=
   document.getElementById("tripDates");
@@ -2489,12 +2438,12 @@ function updateTripDates(){
  if(d1 && d2){
 
   element.textContent=
-   T("datePeople",{start:formatDate(d1),end:formatDate(d2),days:state.days,people});
+   `${formatDate(d1)} → ${formatDate(d2)} · ${state.days} days · ${people}`;
 
  }else{
 
   element.textContent=
-   T("chooseDates",{days:state.days,people});
+   `Choose your dates · ${state.days} days · ${people}`;
 
  }
 }
@@ -2708,17 +2657,48 @@ function selectCity(id){
 ========================= */
 
 function renderTravellers(){
- const options=[
-  ["Solo traveller","solo","travellerHint"],
-  ["Couple","couple","travellerHint"],
-  ["Family / Friends","familyFriends","familyHint"]
+
+ const a=[
+  "Solo traveller",
+  "Couple",
+  "Family / Friends"
  ];
- document.getElementById("travellersHome").innerHTML=options.map(([raw,key,hint])=>`
-  <button class="choice ${state.traveller===raw?"selected":""}" onclick="selectTraveller('${raw}')">
-   <strong>${T(key)}</strong>
-   <span>${T(hint)}</span>
-  </button>
- `).join("");
+
+ const html=
+  a.map(x=>`
+
+   <button
+    class="choice ${
+     state.traveller===x
+      ?"selected"
+      :""
+    }"
+    onclick="
+     selectTraveller('${x}')
+    "
+   >
+
+    <strong>
+     ${x}
+    </strong>
+
+    <span>
+     ${
+      x==="Family / Friends"
+       ?"Choose how many people"
+       :"A trip shaped around you"
+     }
+    </span>
+
+   </button>
+
+  `).join("");
+
+
+ document.getElementById(
+  "travellersHome"
+ ).innerHTML=html;
+
  renderPersons();
 }
 
@@ -2796,7 +2776,7 @@ function renderPersons(){
     </button>
 
     <span class="mini-note">
-     ${T("groupPeople")}
+     people · hotel price adjusts per person
     </span>
 
    </div>
@@ -2816,7 +2796,7 @@ function renderPersons(){
      ?"person"
      :"people"
    }
-   · ${T("soloPersonNote",{count:state.persons,word:state.persons===1?T("person"):T("people")})}
+   · hotel pricing will be based on your group size.
   </div>
 
  `;
@@ -2858,9 +2838,28 @@ function startTrip(){
 ========================= */
 
 function renderInterests(){
+
  const c=cities[state.city];
- document.getElementById("interestList").innerHTML=c.interests.map(x=>`
-  <button class="chip ${state.interests.includes(x)?"selected":""}" onclick="toggleInterest('${x}')">${T(x)}</button>
+
+ document.getElementById(
+  "interestList"
+ ).innerHTML=
+
+ c.interests.map(x=>`
+
+  <button
+   class="chip ${
+    state.interests.includes(x)
+     ?"selected"
+     :""
+   }"
+   onclick="
+    toggleInterest('${x}')
+   "
+  >
+   ${x}
+  </button>
+
  `).join("");
 }
 
@@ -3026,7 +3025,7 @@ function renderPlaces(){
  document.getElementById(
   "placeCount"
  ).textContent=
-  T("placesCount",{count:state.places.length});
+  `${state.places.length} selected`;
 
 
  document.getElementById(
@@ -3072,7 +3071,7 @@ function renderPlaces(){
    <div class="place-body">
 
     <div class="eyebrow">
-     ${T(p[1])}
+     ${p[1]}
     </div>
 
     <h3>
@@ -3084,7 +3083,7 @@ function renderPlaces(){
     </div>
 
     <span class="tag">
-     ${T("visit",{time:p[4]})}
+     Visit ${p[4]}
     </span>
 
    </div>
@@ -3183,7 +3182,7 @@ function renderHotels(){
      <h3>${h[0]}</h3>
 
      <div class="meta">
-      ${T("centralStay")}
+      Comfortable stay · Central location
      </div>
 
      <div class="price">
@@ -3191,7 +3190,7 @@ function renderHotels(){
      </div>
 
      <div class="small" style="margin-top:8px">
-      ${T("hotelInfo",{rate:money(nightlyRate)})}
+      ${money(nightlyRate)} / night · per person · per day
      </div>
 
     </div>
@@ -3272,16 +3271,16 @@ function renderCabs(){
     </h3>
 
     <div class="meta">
-     ${T(v[5])}
+     ${v[5]}
     </div>
 
     <div class="price">
-     ${money(v[2])}${T("per8")}
+     ${money(v[2])} / 8 hrs
     </div>
 
     <div class="price-lines">
 
-     ${T("additionalHour")}
+     Extra hour:
      <b>${money(v[3])}</b>
      <br>
 
@@ -3448,7 +3447,9 @@ function showSummary(){
  document.getElementById(
   "summaryMeta"
  ).textContent=
-  `${state.userName} · ${state.days} ${T("days")} · ${Math.max(0,state.days-1)} ${T("nights")}`;
+  `${state.userName} · ${state.days} days · ${
+   Math.max(0,state.days-1)
+  } nights`;
 
 
  document.getElementById(
@@ -3459,19 +3460,24 @@ function showSummary(){
 
    ?`${formatDate(state.startDate)} → ${formatDate(state.endDate)}`
 
-   :T("notSelected");
+   :"Dates not selected";
 
 
  document.getElementById(
   "summaryTravellers"
  ).textContent=
-  `${state.persons} ${state.persons===1?T("person"):T("people")}`;
+  `${state.persons} ${
+   state.persons===1
+    ?"person"
+    :"people"
+  }`;
 
 
  document.getElementById(
   "summaryPlaces"
  ).textContent=
-  T("placesCount",{count:state.places.length});
+  state.places.length+
+  " selected";
 
 
  document.getElementById(
@@ -3480,7 +3486,7 @@ function showSummary(){
 
   h
 
-   ?T("hotelSummary",{name:h[0],total:money(hotelTotal),persons:state.persons,days:state.days})
+   ?`${h[0]} · ${money(hotelTotal)} (${state.persons} person × ${state.days} days)`
 
    :"I'll find my stay myself";
 
@@ -3488,7 +3494,7 @@ function showSummary(){
  document.getElementById(
   "summaryCab"
  ).textContent=
-  T("cabSummary",{name:v[0],base:money(cabBase)});
+  `${v[0]} · ${money(cabBase)}`;
 
 
  document.getElementById(
@@ -3518,18 +3524,97 @@ function showSummary(){
 ========================= */
 
 function confirmTrip(){
- const peopleWord=state.persons===1 ? T("person") : T("people");
- document.getElementById("successText").textContent = T("tripSavedText",{
-  days:state.days, city:cities[state.city].name, name:state.userName,
-  persons:state.persons, peopleWord:peopleWord, places:state.places.length
- });
+
+ document.getElementById(
+  "successText"
+ ).textContent=
+
+  `Your ${state.days}-day ${
+   cities[state.city].name
+  } trip has been saved for ${
+   state.userName
+  }, with ${
+   state.persons
+  } ${
+   state.persons===1
+    ?"person"
+    :"people"
+  }, ${
+   state.places.length
+  } places, your selected hotel and cab.`;
+
  show("success");
 }
 
 
-document.getElementById("language").addEventListener("change", function(){
- setLanguage(this.value);
+/* =========================
+   SOS EMERGENCY
+========================= */
+
+const emergencyNumbers = {
+  police: "100",
+  ambulance: "102"
+};
+
+function openSOS(){
+  const overlay = document.getElementById("sosOverlay");
+  if(!overlay) return;
+
+  overlay.classList.add("open");
+
+  const closeButton = overlay.querySelector(".sos-close");
+  if(closeButton) closeButton.focus();
+}
+
+function closeSOS(){
+  const overlay = document.getElementById("sosOverlay");
+  if(!overlay) return;
+
+  overlay.classList.remove("open");
+}
+
+function callEmergency(type){
+  const number = emergencyNumbers[type];
+
+  if(!number) return;
+
+  const label = type === "police"
+    ? "Police"
+    : "Ambulance";
+
+  const confirmed = confirm(
+    `Call ${label} emergency service at ${number}?`
+  );
+
+  if(!confirmed) return;
+
+  /*
+   * On a phone/tablet this hands the number to the
+   * device's dialer. On desktop it will use whatever
+   * application/handler is registered for tel: links.
+   */
+  window.location.href = `tel:${number}`;
+
+  closeSOS();
+}
+
+document.addEventListener("click", function(e){
+  const overlay = document.getElementById("sosOverlay");
+
+  if(
+    overlay &&
+    e.target === overlay
+  ){
+    closeSOS();
+  }
 });
+
+document.addEventListener("keydown", function(e){
+  if(e.key === "Escape"){
+    closeSOS();
+  }
+});
+
 
 /* =========================
    INITIAL LOAD
@@ -3538,8 +3623,6 @@ document.getElementById("language").addEventListener("change", function(){
 renderCities();
 
 renderTravellers();
-translateStaticUI();
-
 
 </script>
 

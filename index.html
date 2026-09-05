@@ -1670,7 +1670,8 @@ const cities = {
    "Nature",
    "Shopping",
    "Nightlife",
-   "Family-friendly"
+   "Family-friendly",
+   "Heritage"
   ],
 
   places:[
@@ -3623,6 +3624,430 @@ document.addEventListener("keydown", function(e){
 renderCities();
 
 renderTravellers();
+
+/* =========================
+   SAFARIO LANGUAGE CHANGE
+========================= */
+
+let currentLanguage = "English";
+
+const SAFARIO_LANG = {
+ Hindi: {
+  "Curated travel · Your way":"सुव्यवस्थित यात्रा · आपके तरीके से",
+  "Press Esc to go back":"वापस जाने के लिए Esc दबाएँ",
+  "Saved trips":"सेव की गई यात्राएँ",
+  "Start your trip":"अपनी यात्रा शुरू करें",
+  "Your name":"आपका नाम",
+  "Enter your name":"अपना नाम दर्ज करें",
+  "Who are you travelling with?":"आप किसके साथ यात्रा कर रहे हैं?",
+  "Solo traveller":"अकेले यात्री",
+  "Couple":"जोड़ा",
+  "Family / Friends":"परिवार / दोस्त",
+  "Choose how many people":"लोगों की संख्या चुनें",
+  "A trip shaped around you":"आपके अनुसार तैयार की गई यात्रा",
+  "Start planning →":"योजना शुरू करें →",
+  "01 · Destination":"01 · गंतव्य",
+  "Where do you want":"आप कहाँ",
+  "to go?":"जाना चाहते हैं?",
+  "Choose a city and we'll build your trip around it.":"एक शहर चुनें और हम उसके अनुसार आपकी यात्रा तैयार करेंगे।",
+  "← Back":"← वापस",
+  "Build your trip":"अपनी यात्रा बनाएँ",
+  "Start date":"शुरू होने की तारीख",
+  "End date":"अंतिम तारीख",
+  "What pulls you in?":"आपको क्या पसंद है?",
+  "Your stay":"आपका प्रवास",
+  "days":"दिन",
+  "Show my places →":"मेरी जगहें दिखाएँ →",
+  "Your places":"आपकी जगहें",
+  "Make it yours.":"इसे अपना बनाएँ।",
+  "Continue to stays →":"ठहरने के लिए आगे बढ़ें →",
+  "Find your home base.":"अपना ठिकाना चुनें।",
+  "I'll find my stay myself →":"मैं अपना होटल खुद ढूँढूँगा →",
+  "You can add your hotel later.":"आप बाद में अपना होटल जोड़ सकते हैं।",
+  "Choose my ride →":"अपनी सवारी चुनें →",
+  "Your ride":"आपकी सवारी",
+  "Get around your way.":"अपने तरीके से घूमें।",
+  "Every option includes a driver for 8 hours. Extra hours and distance are added transparently.":"हर विकल्प में 8 घंटे का ड्राइवर शामिल है। अतिरिक्त घंटे और दूरी के शुल्क साफ़ तौर पर दिखाए जाते हैं।",
+  "Extra hours":"अतिरिक्त घंटे",
+  "Select a cab to see the extra-hour price.":"अतिरिक्त घंटे का शुल्क देखने के लिए कैब चुनें।",
+  "Review my trip →":"अपनी यात्रा देखें →",
+  "Almost there":"बस थोड़ा और",
+  "Your trip, together.":"आपकी पूरी यात्रा।",
+  "Dates":"तिथियाँ",
+  "Travellers":"यात्री",
+  "Places":"जगहें",
+  "Hotel":"होटल",
+  "Cab":"कैब",
+  "Distance charges":"दूरी शुल्क",
+  "Estimated total":"अनुमानित कुल",
+  "Book my trip":"मेरी यात्रा बुक करें",
+  "Trip saved":"यात्रा सेव हो गई",
+  "You're going places.":"अब आपकी यात्रा शुरू होने वाली है।",
+  "Plan another trip":"एक और यात्रा बनाएँ",
+  "Religious":"धार्मिक",
+  "Food":"खाना",
+  "History":"इतिहास",
+  "Nature":"प्रकृति",
+  "Shopping":"खरीदारी",
+  "Nightlife":"नाइटलाइफ़",
+  "Family-friendly":"परिवार के लिए उपयुक्त",
+  "Heritage":"विरासत",
+  "Culture":"संस्कृति",
+  "Sports":"खेल",
+  "Experience":"अनुभव",
+  "Spiritual":"आध्यात्मिक",
+  "Family":"परिवार",
+  "Extra hour:":"अतिरिक्त घंटा:",
+  "Distance:":"दूरी:",
+  "Police":"पुलिस",
+  "Ambulance":"एम्बुलेंस",
+  "Cancel":"रद्द करें",
+  "Emergency assistance":"आपातकालीन सहायता",
+  "Need help?":"मदद चाहिए?",
+  "Don't worry, we got you 😊":"चिंता मत करें, हम आपके साथ हैं 😊",
+  "Call 100":"100 पर कॉल करें",
+  "Call 102":"102 पर कॉल करें",
+  "prototype estimate":"अनुमानित प्रोटोटाइप",
+ },
+ Punjabi: {
+  "Curated travel · Your way":"ਸੁਚੱਜੀ ਯਾਤਰਾ · ਤੁਹਾਡੇ ਤਰੀਕੇ ਨਾਲ",
+  "Press Esc to go back":"ਵਾਪਸ ਜਾਣ ਲਈ Esc ਦਬਾਓ",
+  "Saved trips":"ਸੇਵ ਕੀਤੀਆਂ ਯਾਤਰਾਵਾਂ",
+  "Start your trip":"ਆਪਣੀ ਯਾਤਰਾ ਸ਼ੁਰੂ ਕਰੋ",
+  "Your name":"ਤੁਹਾਡਾ ਨਾਮ",
+  "Enter your name":"ਆਪਣਾ ਨਾਮ ਦਰਜ ਕਰੋ",
+  "Who are you travelling with?":"ਤੁਸੀਂ ਕਿਸ ਨਾਲ ਯਾਤਰਾ ਕਰ ਰਹੇ ਹੋ?",
+  "Solo traveller":"ਇਕੱਲਾ ਯਾਤਰੀ",
+  "Couple":"ਜੋੜਾ",
+  "Family / Friends":"ਪਰਿਵਾਰ / ਦੋਸਤ",
+  "Choose how many people":"ਲੋਕਾਂ ਦੀ ਗਿਣਤੀ ਚੁਣੋ",
+  "A trip shaped around you":"ਤੁਹਾਡੇ ਲਈ ਤਿਆਰ ਕੀਤੀ ਯਾਤਰਾ",
+  "Start planning →":"ਯੋਜਨਾ ਸ਼ੁਰੂ ਕਰੋ →",
+  "01 · Destination":"01 · ਮੰਜ਼ਿਲ",
+  "Where do you want":"ਤੁਸੀਂ ਕਿੱਥੇ",
+  "to go?":"ਜਾਣਾ ਚਾਹੁੰਦੇ ਹੋ?",
+  "Choose a city and we'll build your trip around it.":"ਇੱਕ ਸ਼ਹਿਰ ਚੁਣੋ ਅਤੇ ਅਸੀਂ ਉਸ ਦੇ ਅਨੁਸਾਰ ਤੁਹਾਡੀ ਯਾਤਰਾ ਤਿਆਰ ਕਰਾਂਗੇ।",
+  "← Back":"← ਵਾਪਸ",
+  "Build your trip":"ਆਪਣੀ ਯਾਤਰਾ ਬਣਾਓ",
+  "Start date":"ਸ਼ੁਰੂ ਮਿਤੀ",
+  "End date":"ਅੰਤ ਮਿਤੀ",
+  "What pulls you in?":"ਤੁਹਾਨੂੰ ਕੀ ਪਸੰਦ ਹੈ?",
+  "Your stay":"ਤੁਹਾਡਾ ਰਹਿਣਾ",
+  "days":"ਦਿਨ",
+  "Show my places →":"ਮੇਰੀਆਂ ਥਾਵਾਂ ਦਿਖਾਓ →",
+  "Your places":"ਤੁਹਾਡੀਆਂ ਥਾਵਾਂ",
+  "Make it yours.":"ਇਸਨੂੰ ਆਪਣਾ ਬਣਾਓ।",
+  "Continue to stays →":"ਰਹਿਣ ਲਈ ਅੱਗੇ ਵਧੋ →",
+  "Find your home base.":"ਆਪਣਾ ਠਿਕਾਣਾ ਚੁਣੋ।",
+  "I'll find my stay myself →":"ਮੈਂ ਆਪਣਾ ਹੋਟਲ ਖੁਦ ਲੱਭਾਂਗਾ →",
+  "You can add your hotel later.":"ਤੁਸੀਂ ਆਪਣਾ ਹੋਟਲ ਬਾਅਦ ਵਿੱਚ ਜੋੜ ਸਕਦੇ ਹੋ।",
+  "Choose my ride →":"ਆਪਣੀ ਸਵਾਰੀ ਚੁਣੋ →",
+  "Your ride":"ਤੁਹਾਡੀ ਸਵਾਰੀ",
+  "Get around your way.":"ਆਪਣੇ ਤਰੀਕੇ ਨਾਲ ਘੁੰਮੋ।",
+  "Every option includes a driver for 8 hours. Extra hours and distance are added transparently.":"ਹਰ ਵਿਕਲਪ ਵਿੱਚ 8 ਘੰਟਿਆਂ ਦਾ ਡਰਾਈਵਰ ਸ਼ਾਮਲ ਹੈ। ਵਾਧੂ ਘੰਟਿਆਂ ਅਤੇ ਦੂਰੀ ਦੇ ਖਰਚੇ ਸਪਸ਼ਟ ਤੌਰ 'ਤੇ ਦਿੱਤੇ ਜਾਂਦੇ ਹਨ।",
+  "Extra hours":"ਵਾਧੂ ਘੰਟੇ",
+  "Select a cab to see the extra-hour price.":"ਵਾਧੂ ਘੰਟੇ ਦਾ ਰੇਟ ਵੇਖਣ ਲਈ ਕੈਬ ਚੁਣੋ।",
+  "Review my trip →":"ਆਪਣੀ ਯਾਤਰਾ ਵੇਖੋ →",
+  "Almost there":"ਲਗਭਗ ਤਿਆਰ",
+  "Your trip, together.":"ਤੁਹਾਡੀ ਪੂਰੀ ਯਾਤਰਾ।",
+  "Dates":"ਤਾਰੀਖਾਂ",
+  "Travellers":"ਯਾਤਰੀ",
+  "Places":"ਥਾਵਾਂ",
+  "Hotel":"ਹੋਟਲ",
+  "Cab":"ਕੈਬ",
+  "Distance charges":"ਦੂਰੀ ਦੇ ਖਰਚੇ",
+  "Estimated total":"ਅੰਦਾਜ਼ਨ ਕੁੱਲ",
+  "Book my trip":"ਮੇਰੀ ਯਾਤਰਾ ਬੁੱਕ ਕਰੋ",
+  "Trip saved":"ਯਾਤਰਾ ਸੇਵ ਹੋ ਗਈ",
+  "You're going places.":"ਹੁਣ ਤੁਹਾਡੀ ਯਾਤਰਾ ਸ਼ੁਰੂ ਹੋਣ ਵਾਲੀ ਹੈ।",
+  "Plan another trip":"ਹੋਰ ਯਾਤਰਾ ਬਣਾਓ",
+  "Religious":"ਧਾਰਮਿਕ",
+  "Food":"ਖਾਣਾ",
+  "History":"ਇਤਿਹਾਸ",
+  "Nature":"ਕੁਦਰਤ",
+  "Shopping":"ਖਰੀਦਦਾਰੀ",
+  "Nightlife":"ਨਾਈਟਲਾਈਫ਼",
+  "Family-friendly":"ਪਰਿਵਾਰ ਲਈ ਢੁੱਕਵਾਂ",
+  "Heritage":"ਵਿਰਾਸਤ",
+  "Culture":"ਸੱਭਿਆਚਾਰ",
+  "Sports":"ਖੇਡਾਂ",
+  "Experience":"ਤਜਰਬਾ",
+  "Spiritual":"ਅਧਿਆਤਮਿਕ",
+  "Family":"ਪਰਿਵਾਰ",
+  "Extra hour:":"ਵਾਧੂ ਘੰਟਾ:",
+  "Distance:":"ਦੂਰੀ:",
+  "Police":"ਪੁਲਿਸ",
+  "Ambulance":"ਐਂਬੂਲੈਂਸ",
+  "Cancel":"ਰੱਦ ਕਰੋ",
+  "Emergency assistance":"ਐਮਰਜੈਂਸੀ ਮਦਦ",
+  "Need help?":"ਮਦਦ ਚਾਹੀਦੀ ਹੈ?",
+  "Don't worry, we got you 😊":"ਚਿੰਤਾ ਨਾ ਕਰੋ, ਅਸੀਂ ਤੁਹਾਡੇ ਨਾਲ ਹਾਂ 😊",
+  "Call 100":"100 'ਤੇ ਕਾਲ ਕਰੋ",
+  "Call 102":"102 'ਤੇ ਕਾਲ ਕਰੋ"
+ }
+};
+
+/* =========================
+   WORKING LANGUAGE SWITCHER
+========================= */
+
+/*
+ * Keep the English source in a WeakMap.
+ * Text nodes do not have HTMLElement.dataset,
+ * so the previous implementation could fail here.
+ */
+const safarioEnglishText = new WeakMap();
+
+const safarioReverse = {
+ English: {},
+ Hindi: {},
+ Punjabi: {}
+};
+
+Object.entries(SAFARIO_LANG || {}).forEach(([language, dict]) => {
+ Object.entries(dict).forEach(([english, translated]) => {
+  safarioReverse[language][translated] = english;
+ });
+});
+
+function getEnglishText(node){
+ if(!node || node.nodeType !== Node.TEXT_NODE) return "";
+
+ const current = String(node.nodeValue || "");
+ const trimmed = current.trim();
+
+ if(!trimmed) return "";
+
+ if(safarioEnglishText.has(node)){
+  return safarioEnglishText.get(node);
+ }
+
+ /*
+  If this node was created while Hindi/Punjabi was active,
+  recover its English source using the reverse dictionary.
+ */
+ const reverse =
+  safarioReverse[currentLanguage] &&
+  safarioReverse[currentLanguage][trimmed];
+
+ const english = reverse || trimmed;
+
+ safarioEnglishText.set(node, english);
+ return english;
+}
+
+function translateDynamicString(english){
+
+ const dict = SAFARIO_LANG[currentLanguage] || {};
+
+ if(dict[english]){
+  return dict[english];
+ }
+
+ if(currentLanguage === "Hindi"){
+  return String(english)
+   .replace(/^(\d+) selected$/, "$1 चयनित")
+   .replace(/^Min (\d+) days$/, "न्यूनतम $1 दिन")
+   .replace(/^Max (\d+) days$/, "अधिकतम $1 दिन")
+   .replace(/^(\d+) days$/, "$1 दिन")
+   .replace(/^(\d+) day$/, "$1 दिन")
+   .replace(/^(\d+) person$/, "$1 व्यक्ति")
+   .replace(/^(\d+) people$/, "$1 लोग")
+   .replace(/^(\d+) nights$/, "$1 रातें")
+   .replace(/^(\d+) night$/, "$1 रात")
+   .replace(/^Visit (.+)$/, "$1 पर जाएँ");
+ }
+
+ if(currentLanguage === "Punjabi"){
+  return String(english)
+   .replace(/^(\d+) selected$/, "$1 ਚੁਣੀਆਂ")
+   .replace(/^Min (\d+) days$/, "ਘੱਟੋ-ਘੱਟ $1 ਦਿਨ")
+   .replace(/^Max (\d+) days$/, "ਵੱਧ ਤੋਂ ਵੱਧ $1 ਦਿਨ")
+   .replace(/^(\d+) days$/, "$1 ਦਿਨ")
+   .replace(/^(\d+) day$/, "$1 ਦਿਨ")
+   .replace(/^(\d+) person$/, "$1 ਵਿਅਕਤੀ")
+   .replace(/^(\d+) people$/, "$1 ਲੋਕ")
+   .replace(/^(\d+) nights$/, "$1 ਰਾਤਾਂ")
+   .replace(/^(\d+) night$/, "$1 ਰਾਤ")
+   .replace(/^Visit (.+)$/, "$1 ਵੇਖੋ");
+ }
+
+ return english;
+}
+
+function translateTextNode(node){
+
+ if(node.nodeType !== Node.TEXT_NODE) return;
+
+ const english = getEnglishText(node);
+
+ if(!english) return;
+
+ const translated =
+  currentLanguage === "English"
+   ? english
+   : translateDynamicString(english);
+
+ const originalNodeText = String(node.nodeValue || "");
+ const lead = (originalNodeText.match(/^\s*/) || [""])[0];
+ const tail = (originalNodeText.match(/\s*$/) || [""])[0];
+
+ node.nodeValue =
+  lead + translated + tail;
+}
+
+function translatePage(){
+
+ document
+  .querySelectorAll("body *")
+  .forEach(el => {
+
+   el.childNodes.forEach(node => {
+
+    if(node.nodeType === Node.TEXT_NODE){
+     translateTextNode(node);
+    }
+
+   });
+
+  });
+
+
+ document
+  .querySelectorAll("input[placeholder]")
+  .forEach(input => {
+
+   const current = input.placeholder || "";
+
+   if(!input.dataset.safarioEnglishPlaceholder){
+
+    const english =
+     (safarioReverse[currentLanguage] &&
+      safarioReverse[currentLanguage][current])
+      ||
+      current;
+
+    input.dataset.safarioEnglishPlaceholder =
+     english;
+   }
+
+   const english =
+    input.dataset.safarioEnglishPlaceholder;
+
+   input.placeholder =
+    currentLanguage === "English"
+     ? english
+     : translateDynamicString(english);
+
+  });
+
+
+ const language =
+  document.getElementById("language");
+
+ if(language){
+
+  language.value =
+   currentLanguage === "Hindi"
+    ? "हिन्दी"
+    : currentLanguage === "Punjabi"
+      ? "ਪੰਜਾਬੀ"
+      : "English";
+
+ }
+}
+
+
+/*
+ * Re-render the current dynamic screen first.
+ * Those render functions always generate English source
+ * text, after which we translate it.
+ */
+function refreshLanguageSensitiveUI(){
+
+ try{
+  if(state.city){
+
+   const active =
+    document.querySelector(".panel.active");
+
+   if(active){
+
+    switch(active.id){
+
+     case "destinations":
+      renderCities();
+      break;
+
+     case "builder":
+      renderTravellers();
+      renderPersons();
+      renderInterests();
+      updateDaysUI();
+      updateTripDates();
+      break;
+
+     case "places":
+      renderPlaces();
+      break;
+
+     case "hotels":
+      renderHotels();
+      break;
+
+     case "cabs":
+      renderCabs();
+      break;
+
+     case "summary":
+      showSummary();
+      break;
+
+    }
+   }
+  }
+ }catch(error){
+  console.warn("Safario language refresh:",error);
+ }
+
+ translatePage();
+
+ /*
+  One delayed pass catches elements generated
+  during the render above.
+ */
+ setTimeout(translatePage,0);
+}
+
+
+const safarioLanguageSelect =
+ document.getElementById("language");
+
+if(safarioLanguageSelect){
+
+ safarioLanguageSelect.addEventListener(
+  "change",
+  function(){
+
+   if(this.value === "हिन्दी"){
+    currentLanguage = "Hindi";
+   }
+   else if(this.value === "ਪੰਜਾਬੀ"){
+    currentLanguage = "Punjabi";
+   }
+   else{
+    currentLanguage = "English";
+   }
+
+   refreshLanguageSensitiveUI();
+
+  }
+ );
+
+}
+
+translatePage();
+
 
 </script>
 

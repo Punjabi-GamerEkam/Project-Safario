@@ -860,15 +860,22 @@ h1,h2,h3{margin:0}
 .profile-button{
  width:38px;
  height:38px;
- border:1px solid var(--line);
- background:var(--white);
- color:var(--ink);
+ border:0;
+ background:transparent;
+ color:var(--muted);
  border-radius:50%;
  cursor:pointer;
  display:grid;
  place-items:center;
- font-size:17px;
- transition:transform .3s ease,background .2s,border-color .2s;
+ font-size:22px;
+ line-height:1;
+ transition:transform .3s ease,background .2s,color .2s;
+ padding:0;
+}
+
+.profile-button:hover{
+ background:var(--paper2);
+ color:var(--accent);
 }
 
 .profile-area.has-name .profile-button{
@@ -1173,6 +1180,18 @@ h1,h2,h3{margin:0}
 
    </div>
 
+   <div class="field">
+
+    <label id="profileSexLabel">Sex</label>
+
+    <select id="profileSexInput">
+     <option value="">Prefer not to say</option>
+     <option value="Male">Male</option>
+     <option value="Female">Female</option>
+    </select>
+
+   </div>
+
   </div>
 
 
@@ -1315,9 +1334,7 @@ h1,h2,h3{margin:0}
    onclick="openProfile()"
    aria-label="Open profile"
    title="Profile"
-  >
-   👤
-  </button>
+  >👤</button>
 
  </div>
 
@@ -1832,43 +1849,6 @@ h1,h2,h3{margin:0}
  </div>
 
 
- <div class="driver-preference">
-
-  <div class="driver-preference-copy">
-
-   <strong id="femaleDriverTitle">
-    Request a female driver
-   </strong>
-
-   <span id="femaleDriverNote">
-    We'll try to match you with a female driver, subject to availability.
-   </span>
-
-  </div>
-
-
-  <div class="driver-preference-wrap">
-
-   <span
-    class="safario-toggle-label"
-    id="femaleDriverToggleLabel"
-   >
-    OFF
-   </span>
-
-   <button
-    type="button"
-    class="safario-toggle"
-    id="femaleDriverToggle"
-    onclick="toggleFemaleDriver()"
-    aria-label="Request a female driver"
-    aria-pressed="false"
-   ></button>
-
-  </div>
-
- </div>
-
 
  <button
   class="primary"
@@ -1946,11 +1926,6 @@ h1,h2,h3{margin:0}
      <span id="summaryCab"></span>
     </div>
 
-
-    <div class="summary-row">
-     <span id="summaryDriverLabel">Driver preference</span>
-     <span id="summaryDriver"></span>
-    </div>
 
 
     <div class="summary-row">
@@ -2049,7 +2024,7 @@ const cities = {
   state:"Punjab, India",
   desc:"Golden streets, living history & unforgettable food.",
   image:"asr.jpg",
-  min:2,
+  min:1,
   max:5,
   rec:3,
 
@@ -2164,7 +2139,7 @@ const cities = {
   state:"Punjab, India",
   desc:"Warm hospitality, heritage and a slower Punjabi rhythm.",
   image:"jal.jpg",
-  min:2,
+  min:1,
   max:4,
   rec:3,
 
@@ -2293,35 +2268,35 @@ const cities = {
    [
     "Nehru Rose Garden",
     "Nature",
-    "rg.jpg",
+    "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=800&q=80",
     "A peaceful green escape in the city.",
     "1.5 hrs"
    ],
    [
     "Punjab Agricultural University",
     "Culture",
-    "pau.jpg",
+    "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80",
     "A beautiful campus with Punjab's agricultural heritage.",
     "2 hrs"
    ],
    [
     "Rakh Bagh",
     "Nature",
-    "rb.jpg",
+    "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=800&q=80",
     "Green space for a relaxed city afternoon.",
     "1.5 hrs"
    ],
    [
     "Pavilion Mall",
     "Shopping",
-    "pm.jpg",
+    "https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?auto=format&fit=crop&w=800&q=80",
     "Modern shopping, dining and entertainment.",
     "2–3 hrs"
    ],
    [
     "Clock Tower Market",
     "Shopping",
-    "ct.jpg",
+    "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80",
     "Local markets and the character of old Ludhiana.",
     "2 hrs"
    ]
@@ -2421,9 +2396,9 @@ let state={
 
   profileEmail:"",
 
-  profilePreferences:[],
+  profileSex:"",
 
-  femaleDriverRequested:false
+  profilePreferences:[],
 
 };
 
@@ -2734,7 +2709,7 @@ function handleEndDateChange(){
 
    const limited=
     Math.max(
-     c.min,
+     1,
      Math.min(c.max,calculatedDays)
     );
 
@@ -3296,6 +3271,7 @@ function autoSelectPlacesByInterests(){
  const places=cities[state.city].places;
 
  const targetCount=Math.min(
+  3,
   places.length,
   Math.max(1,state.days+1)
  );
@@ -3388,9 +3364,11 @@ function setDays(n){
  const c=cities[state.city];
 
  state.days=Math.max(
-  c.min,
+  1,
   Math.min(c.max,n)
  );
+
+ state.hotelSkipped=false;
 
  updateDaysUI();
 
@@ -3508,6 +3486,18 @@ function renderPlaces(){
 
 function togglePlace(i){
 
+ if(
+  !state.places.includes(i) &&
+  state.places.length >= 3
+ ){
+
+  alert(
+   "You can select a maximum of 3 places."
+  );
+
+  return;
+ }
+
  state.places=
   state.places.includes(i)
    ?state.places.filter(x=>x!==i)
@@ -3525,15 +3515,11 @@ function togglePlace(i){
 
 function showHotels(){
 
- if(!state.places.length){
-
-  alert(
-   "Pick at least one place first."
-  );
-
-  return;
- }
-
+ /*
+  Hotel selection is available for every trip length,
+  including a 1-day trip. A 1-day trip simply means
+  the stay is priced for 1 day in this prototype.
+ */
  state.hotelSkipped=false;
 
  renderHotels();
@@ -3565,8 +3551,13 @@ function renderHotels(){
    String(h[2]).replace(/[^0-9]/g,""),10
   )||0;
 
-  const total=
-   nightlyRate*Number(state.persons)*Number(state.days);
+  const billableHotelDays =
+   Math.max(1, Number(state.days));
+
+  const total =
+   nightlyRate *
+   Number(state.persons) *
+   billableHotelDays;
 
   return `
 
@@ -3727,8 +3718,6 @@ function renderCabs(){
   ?`${money(selected[3])} per additional hour · charged per trip day`
 
   :"Select a cab to see the extra-hour price.";
-
- updateFemaleDriverToggle();
 }
 
 
@@ -3862,8 +3851,8 @@ function showSummary(){
   "summaryMeta"
  ).textContent=
   `${state.userName} · ${state.days} days · ${
-   Math.max(0,state.days-1)
-  } nights`;
+   state.days===1 ? "1 day stay" : Math.max(0,state.days-1)+" nights"
+  }`;
 
 
  document.getElementById(
@@ -3909,21 +3898,6 @@ function showSummary(){
   "summaryCab"
  ).textContent=
   `${v[0]} · ${money(cabBase)}`;
-
-
- const summaryDriver =
-  document.getElementById("summaryDriver");
-
- if(summaryDriver){
-
-  const lang =
-   PROFILE_TEXT[profileLanguageName()];
-
-  summaryDriver.textContent =
-   state.femaleDriverRequested
-    ? lang.femaleRequested
-    : lang.noPreference;
- }
 
 
  document.getElementById(
@@ -4002,19 +3976,16 @@ const PROFILE_TEXT = {
   name:"Name",
   phone:"Phone",
   email:"Email",
+  sex:"Sex",
+  preferNot:"Prefer not to say",
+  male:"Male",
+  female:"Female",
   namePlaceholder:"Enter your name",
   phonePlaceholder:"Enter your phone number",
   emailPlaceholder:"Enter your email",
   preferred:"Preferred places",
   preferenceText:"Pick the types of places you usually enjoy. Safario will use these as your default interests.",
   save:"Save profile",
-  requestDriver:"Request a female driver",
-  driverNote:"We'll try to match you with a female driver, subject to availability.",
-  off:"OFF",
-  on:"ON",
-  driverPreference:"Driver preference",
-  femaleRequested:"Female driver requested",
-  noPreference:"No preference",
   interest:{
    "Religious":"Religious",
    "Food":"Food",
@@ -4036,19 +4007,16 @@ const PROFILE_TEXT = {
   name:"नाम",
   phone:"फ़ोन",
   email:"ईमेल",
+  sex:"लिंग",
+  preferNot:"बताना पसंद नहीं",
+  male:"पुरुष",
+  female:"महिला",
   namePlaceholder:"अपना नाम दर्ज करें",
   phonePlaceholder:"अपना फ़ोन नंबर दर्ज करें",
   emailPlaceholder:"अपना ईमेल दर्ज करें",
   preferred:"पसंदीदा जगहें",
   preferenceText:"वे जगहों के प्रकार चुनें जिन्हें आप आमतौर पर पसंद करते हैं। Safario इन्हें आपकी डिफ़ॉल्ट पसंद के रूप में इस्तेमाल करेगा।",
   save:"प्रोफ़ाइल सेव करें",
-  requestDriver:"महिला ड्राइवर का अनुरोध करें",
-  driverNote:"हम उपलब्धता के अनुसार महिला ड्राइवर से मिलाने की कोशिश करेंगे।",
-  off:"बंद",
-  on:"चालू",
-  driverPreference:"ड्राइवर पसंद",
-  femaleRequested:"महिला ड्राइवर का अनुरोध किया गया",
-  noPreference:"कोई पसंद नहीं",
   interest:{
    "Religious":"धार्मिक",
    "Food":"खाना",
@@ -4070,19 +4038,16 @@ const PROFILE_TEXT = {
   name:"ਨਾਮ",
   phone:"ਫ਼ੋਨ",
   email:"ਈਮੇਲ",
+  sex:"ਲਿੰਗ",
+  preferNot:"ਦੱਸਣਾ ਪਸੰਦ ਨਹੀਂ",
+  male:"ਪੁਰਸ਼",
+  female:"ਮਹਿਲਾ",
   namePlaceholder:"ਆਪਣਾ ਨਾਮ ਦਰਜ ਕਰੋ",
   phonePlaceholder:"ਆਪਣਾ ਫ਼ੋਨ ਨੰਬਰ ਦਰਜ ਕਰੋ",
   emailPlaceholder:"ਆਪਣਾ ਈਮੇਲ ਦਰਜ ਕਰੋ",
   preferred:"ਪਸੰਦੀਦਾ ਥਾਵਾਂ",
   preferenceText:"ਉਹ ਥਾਵਾਂ ਦੀਆਂ ਕਿਸਮਾਂ ਚੁਣੋ ਜੋ ਤੁਸੀਂ ਆਮ ਤੌਰ 'ਤੇ ਪਸੰਦ ਕਰਦੇ ਹੋ। Safario ਇਨ੍ਹਾਂ ਨੂੰ ਤੁਹਾਡੀਆਂ ਡਿਫ਼ਾਲਟ ਪਸੰਦਾਂ ਵਜੋਂ ਵਰਤੇਗਾ।",
   save:"ਪ੍ਰੋਫ਼ਾਈਲ ਸੇਵ ਕਰੋ",
-  requestDriver:"ਮਹਿਲਾ ਡਰਾਈਵਰ ਦੀ ਬੇਨਤੀ ਕਰੋ",
-  driverNote:"ਅਸੀਂ ਉਪਲਬਧਤਾ ਦੇ ਅਨੁਸਾਰ ਮਹਿਲਾ ਡਰਾਈਵਰ ਨਾਲ ਮਿਲਾਉਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰਾਂਗੇ।",
-  off:"ਬੰਦ",
-  on:"ਚਾਲੂ",
-  driverPreference:"ਡਰਾਈਵਰ ਪਸੰਦ",
-  femaleRequested:"ਮਹਿਲਾ ਡਰਾਈਵਰ ਦੀ ਬੇਨਤੀ ਕੀਤੀ ਗਈ",
-  noPreference:"ਕੋਈ ਪਸੰਦ ਨਹੀਂ",
   interest:{
    "Religious":"ਧਾਰਮਿਕ",
    "Food":"ਖਾਣਾ",
@@ -4174,6 +4139,9 @@ function updateProfileLanguage(){
  const email =
   document.getElementById("profileEmailLabel");
 
+ const sex =
+  document.getElementById("profileSexLabel");
+
  const preferred =
   document.getElementById("profilePreferenceLabel");
 
@@ -4198,7 +4166,17 @@ function updateProfileLanguage(){
  if(name) name.textContent = lang.name;
  if(phone) phone.textContent = lang.phone;
  if(email) email.textContent = lang.email;
+ if(sex) sex.textContent = lang.sex;
  if(preferred) preferred.textContent = lang.preferred;
+
+ const sexInput =
+  document.getElementById("profileSexInput");
+
+ if(sexInput && sexInput.options.length >= 3){
+  sexInput.options[0].textContent = lang.preferNot;
+  sexInput.options[1].textContent = lang.male;
+  sexInput.options[2].textContent = lang.female;
+ }
  if(preferenceText) preferenceText.textContent = lang.preferenceText;
  if(save) save.textContent = lang.save;
 
@@ -4231,7 +4209,6 @@ function updateProfileLanguage(){
  }
 
  renderProfileInterests();
- updateFemaleDriverToggle();
 }
 
 function updateProfileHeader(){
@@ -4275,6 +4252,13 @@ function openProfile(){
  document.getElementById("profileEmailInput").value =
   state.profileEmail;
 
+ const sexInput =
+  document.getElementById("profileSexInput");
+
+ if(sexInput){
+  sexInput.value = state.profileSex;
+ }
+
  updateProfileLanguage();
 
  overlay.classList.add("open");
@@ -4314,6 +4298,11 @@ function saveProfile(){
    .value
    .trim();
 
+ const sex =
+  document
+   .getElementById("profileSexInput")
+   .value;
+
  if(!name){
 
   alert(
@@ -4346,7 +4335,11 @@ function saveProfile(){
  state.profileName = name;
  state.profilePhone = phone;
  state.profileEmail = email;
+ state.profileSex = sex;
  state.userName = name;
+
+ if(state.profileSex !== "Female"){
+ }
 
  const homeName =
   document.getElementById("userName");
@@ -4362,6 +4355,7 @@ function saveProfile(){
     name:state.profileName,
     phone:state.profilePhone,
     email:state.profileEmail,
+    sex:state.profileSex,
     preferences:state.profilePreferences
    })
   );
@@ -4415,6 +4409,9 @@ function loadProfile(){
    state.profileEmail =
     saved.email || "";
 
+   state.profileSex =
+    saved.sex || "";
+
    state.profilePreferences =
     Array.isArray(saved.preferences)
      ? saved.preferences
@@ -4434,44 +4431,6 @@ function loadProfile(){
    FEMALE DRIVER
 ========================= */
 
-function updateFemaleDriverToggle(){
-
- const toggle =
-  document.getElementById("femaleDriverToggle");
-
- const label =
-  document.getElementById("femaleDriverToggleLabel");
-
- if(!toggle) return;
-
- const on =
-  state.femaleDriverRequested;
-
- toggle.classList.toggle("on",on);
-
- toggle.setAttribute(
-  "aria-pressed",
-  String(on)
- );
-
- if(label){
-
-  const lang =
-   PROFILE_TEXT[profileLanguageName()];
-
-  label.textContent =
-   on ? lang.on : lang.off;
- }
-}
-
-function toggleFemaleDriver(){
-
- state.femaleDriverRequested =
-  !state.femaleDriverRequested;
-
- updateFemaleDriverToggle();
- updateProfileLanguage();
-}
 
 
 /* Keep the added profile controls synchronized

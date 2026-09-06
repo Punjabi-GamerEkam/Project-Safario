@@ -860,17 +860,15 @@ h1,h2,h3{margin:0}
 .profile-button{
  width:38px;
  height:38px;
- border:0;
- background:transparent;
- color:var(--muted);
+ border:1px solid var(--line);
+ background:var(--white);
+ color:var(--ink);
  border-radius:50%;
  cursor:pointer;
  display:grid;
  place-items:center;
- font-size:22px;
- line-height:1;
- transition:transform .3s ease,background .2s,color .2s;
- padding:0;
+ font-size:17px;
+ transition:transform .3s ease,background .2s,border-color .2s;
 }
 
 .profile-button:hover{
@@ -971,83 +969,6 @@ h1,h2,h3{margin:0}
  .profile-fields .field:first-child{
   grid-column:auto;
  }
-}
-
-/* =========================
-   FEMALE DRIVER TOGGLE
-========================= */
-
-.driver-preference{
- margin-top:24px;
- padding:18px 20px;
- border:1px solid var(--line);
- border-radius:22px;
- background:var(--white);
- display:flex;
- align-items:center;
- justify-content:space-between;
- gap:20px;
-}
-
-.driver-preference-copy strong{
- display:block;
- font-size:14px;
- margin-bottom:5px;
-}
-
-.driver-preference-copy span{
- display:block;
- color:var(--muted);
- font-size:11px;
- line-height:1.45;
-}
-
-.driver-preference-wrap{
- display:flex;
- align-items:center;
- gap:10px;
- flex:0 0 auto;
-}
-
-.safario-toggle-label{
- min-width:28px;
- text-align:center;
- font-size:10px;
- font-weight:800;
- color:var(--muted);
-}
-
-.safario-toggle{
- width:62px;
- height:34px;
- border:0;
- border-radius:999px;
- background:#d8dade;
- padding:3px;
- position:relative;
- cursor:pointer;
- transition:background .2s ease;
-}
-
-.safario-toggle::after{
- content:"";
- position:absolute;
- top:3px;
- left:3px;
- width:28px;
- height:28px;
- border-radius:50%;
- background:#fff;
- box-shadow:0 2px 7px rgba(0,0,0,.18);
- transition:transform .2s ease;
-}
-
-.safario-toggle.on{
- background:#36b80b;
-}
-
-.safario-toggle.on::after{
- transform:translateX(28px);
 }
 
 @media(max-width:850px){
@@ -4183,32 +4104,7 @@ function updateProfileLanguage(){
  if(nameInput) nameInput.placeholder = lang.namePlaceholder;
  if(phoneInput) phoneInput.placeholder = lang.phonePlaceholder;
  if(emailInput) emailInput.placeholder = lang.emailPlaceholder;
-
- const driverTitle =
-  document.getElementById("femaleDriverTitle");
-
- const driverNote =
-  document.getElementById("femaleDriverNote");
-
- const driverLabel =
-  document.getElementById("femaleDriverToggleLabel");
-
- const summaryDriverLabel =
-  document.getElementById("summaryDriverLabel");
-
- if(driverTitle) driverTitle.textContent = lang.requestDriver;
- if(driverNote) driverNote.textContent = lang.driverNote;
-
- if(driverLabel){
-  driverLabel.textContent =
-   state.femaleDriverRequested ? lang.on : lang.off;
- }
-
- if(summaryDriverLabel){
-  summaryDriverLabel.textContent = lang.driverPreference;
- }
-
- renderProfileInterests();
+renderProfileInterests();
 }
 
 function updateProfileHeader(){
@@ -4337,11 +4233,7 @@ function saveProfile(){
  state.profileEmail = email;
  state.profileSex = sex;
  state.userName = name;
-
- if(state.profileSex !== "Female"){
- }
-
- const homeName =
+const homeName =
   document.getElementById("userName");
 
  if(homeName){
@@ -4425,12 +4317,6 @@ function loadProfile(){
  updateProfileHeader();
  updateProfileLanguage();
 }
-
-
-/* =========================
-   FEMALE DRIVER
-========================= */
-
 
 
 /* Keep the added profile controls synchronized

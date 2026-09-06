@@ -971,6 +971,153 @@ h1,h2,h3{margin:0}
  }
 }
 
+/* =========================
+   1-DAY PACKED ITINERARY
+========================= */
+
+.packed-day-note{
+ margin:16px 0 0;
+ padding:12px 0 4px;
+ border-top:1px solid #f0caca;
+ color:#b42323;
+ font-size:11px;
+ line-height:1.5;
+}
+
+.packed-day-note strong{
+ color:#a61b1b;
+}
+
+.place-warning-overlay{
+ position:fixed;
+ inset:0;
+ background:rgba(82,32,32,.30);
+ display:none;
+ align-items:center;
+ justify-content:center;
+ padding:20px;
+ z-index:1300;
+ backdrop-filter:blur(6px);
+}
+
+.place-warning-overlay.open{
+ display:flex;
+}
+
+.place-warning-modal{
+ width:min(470px,100%);
+ background:#fffafa;
+ border:1px solid #f0caca;
+ border-radius:28px;
+ padding:30px;
+ box-shadow:0 24px 70px rgba(120,35,35,.18);
+ text-align:center;
+}
+
+.warning-mark{
+ width:58px;
+ height:58px;
+ border-radius:50%;
+ margin:0 auto 16px;
+ display:grid;
+ place-items:center;
+ background:#fff0f0;
+ color:#b42323;
+ font-size:26px;
+ font-weight:800;
+ border:1px solid #efc0c0;
+}
+
+.place-warning-modal h2{
+ font-family:"Playfair Display",serif;
+ font-size:36px;
+ margin:0 0 10px;
+ color:#7f2020;
+}
+
+.place-warning-modal p{
+ margin:0 auto;
+ max-width:390px;
+ color:#6f5b5b;
+ font-size:13px;
+ line-height:1.6;
+}
+
+.warning-choice{
+ width:100%;
+ min-height:52px;
+ display:flex;
+ align-items:center;
+ gap:12px;
+ margin:24px 0 14px;
+ padding:10px 14px;
+ border:1px solid #eccaca;
+ background:#fff;
+ border-radius:14px;
+ color:#5f3434;
+ font-size:12px;
+ font-weight:600;
+ text-align:left;
+ cursor:pointer;
+ transition:.2s;
+}
+
+.warning-choice:hover{
+ border-color:#d98f8f;
+ background:#fff6f6;
+}
+
+.warning-checkbox-box{
+ width:24px;
+ height:24px;
+ flex:0 0 24px;
+ border:1px solid #c6aaaa;
+ background:#fff;
+ border-radius:6px;
+ display:grid;
+ place-items:center;
+ transition:.2s;
+}
+
+.warning-checkbox-icon{
+ display:none;
+ color:#fff;
+ font-size:16px;
+ font-weight:800;
+ line-height:1;
+}
+
+.warning-choice.checked .warning-checkbox-box{
+ background:var(--accent);
+ border-color:var(--accent);
+ box-shadow:0 4px 12px rgba(23,105,224,.25);
+}
+
+.warning-choice.checked .warning-checkbox-icon{
+ display:block;
+}
+
+.warning-choice-text{
+ flex:1;
+}
+
+.warning-continue{
+ width:100%;
+ margin-top:6px;
+}
+
+.warning-cancel{
+ width:100%;
+ margin-top:10px;
+ border:0;
+ background:none;
+ color:#856f6f;
+ font-size:11px;
+ font-weight:700;
+ cursor:pointer;
+ padding:10px;
+}
+
 @media(max-width:850px){
  header{
   padding:0 16px;
@@ -1605,6 +1752,12 @@ h1,h2,h3{margin:0}
  </div>
 
 
+ <div
+  class="packed-day-note hidden"
+  id="packedDayNote"
+ ></div>
+
+
  <button
   class="primary"
   onclick="showHotels()"
@@ -1613,6 +1766,70 @@ h1,h2,h3{margin:0}
  </button>
 
 </section>
+
+
+<!-- PACKED DAY WARNING -->
+
+<div
+ class="place-warning-overlay"
+ id="placeWarningOverlay"
+ role="dialog"
+ aria-modal="true"
+ aria-labelledby="placeWarningTitle"
+>
+ <div class="place-warning-modal">
+
+  <div class="eyebrow">
+   Busy itinerary
+  </div>
+
+  <div class="warning-mark">
+   !
+  </div>
+
+  <h2 id="placeWarningTitle">
+   That's a lot for one day.
+  </h2>
+
+  <p id="placeWarningText">
+   You've selected 5 places for a 1-day trip. You can still continue, but this will be a very packed day.
+  </p>
+
+  <button
+   type="button"
+   class="warning-choice"
+   id="dontRemindAgain"
+   onclick="toggleDontRemindAgain()"
+   aria-label="Don't remind me again"
+   aria-pressed="false"
+  >
+   <span class="warning-checkbox-box">
+    <span class="warning-checkbox-icon">✓</span>
+   </span>
+
+   <span class="warning-choice-text">
+    Don't remind me again
+   </span>
+  </button>
+
+  <button
+   class="primary warning-continue"
+   type="button"
+   onclick="continueFromPlaceWarning()"
+  >
+   Continue anyway →
+  </button>
+
+  <button
+   class="warning-cancel"
+   type="button"
+   onclick="closePlaceWarning()"
+  >
+   Go back and edit places
+  </button>
+
+ </div>
+</div>
 
 
 <!-- HOTELS -->
@@ -2647,6 +2864,8 @@ function handleEndDateChange(){
    state.days=calculatedDays;
   }
 
+  enforcePlaceLimitForDays();
+
   updateDaysUI();
 
   /*
@@ -3191,11 +3410,10 @@ function autoSelectPlacesByInterests(){
 
  const places=cities[state.city].places;
 
- const targetCount=Math.min(
-  3,
-  places.length,
-  Math.max(1,state.days+1)
- );
+ const targetCount =
+  state.days===1
+   ?Math.min(3,places.length)
+   :places.length;
 
  if(state.interests.length===0){
   state.places=places.map((p,i)=>i).slice(0,targetCount);
@@ -3291,6 +3509,7 @@ function setDays(n){
 
  state.hotelSkipped=false;
 
+
  updateDaysUI();
 
  if(state.startDate){
@@ -3308,7 +3527,6 @@ function setDays(n){
 function changeDays(n){
  setDays(state.days+n);
 }
-
 
 
 /* =========================
@@ -3402,22 +3620,12 @@ function renderPlaces(){
   </div>
 
  `).join("");
+
+ updatePackedDayFeedback();
 }
 
 
 function togglePlace(i){
-
- if(
-  !state.places.includes(i) &&
-  state.places.length >= 3
- ){
-
-  alert(
-   "You can select a maximum of 3 places."
-  );
-
-  return;
- }
 
  state.places=
   state.places.includes(i)
@@ -3426,6 +3634,8 @@ function togglePlace(i){
 
  state.autoPlaceSelection=false;
  renderPlaces();
+ updatePackedDayFeedback();
+
 }
 
 
@@ -3434,13 +3644,171 @@ function togglePlace(i){
    HOTELS
 ========================= */
 
+let dontRemindPackedDay = false;
+
+function loadPackedDayPreference(){
+ const saved =
+  localStorage.getItem("safario_packed_day_no_remind_v2");
+
+ dontRemindPackedDay =
+  saved === "true";
+}
+
+function toggleDontRemindAgain(){
+
+ dontRemindPackedDay = !dontRemindPackedDay;
+
+ const checkbox =
+  document.getElementById("dontRemindAgain");
+
+ if(!checkbox)return;
+
+ checkbox.classList.toggle(
+  "checked",
+  dontRemindPackedDay
+ );
+
+ checkbox.setAttribute(
+  "aria-pressed",
+  String(dontRemindPackedDay)
+ );
+
+ if(dontRemindPackedDay){
+  localStorage.setItem(
+   "safario_packed_day_no_remind_v2",
+   "true"
+  );
+ }else{
+  localStorage.removeItem(
+   "safario_packed_day_no_remind_v2"
+  );
+ }
+}
+
+
+function updatePackedDayFeedback(){
+
+ const note =
+  document.getElementById("packedDayNote");
+
+ if(!note)return;
+
+ const count = state.places.length;
+
+ if(
+  state.days===1 &&
+  count>3
+ ){
+
+  note.classList.remove("hidden");
+
+  note.innerHTML =
+   `<strong>${count} places selected.</strong> That's a packed day, but you can continue.`;
+
+ }else{
+
+  note.classList.add("hidden");
+  note.textContent = "";
+ }
+}
+
+
+function openPlaceWarning(){
+
+ const count = Number(state.places.length);
+
+ if(count<5 || Number(state.days)!==1){
+  return;
+ }
+
+ const title =
+  document.getElementById("placeWarningTitle");
+
+ const text =
+  document.getElementById("placeWarningText");
+
+ const overlay =
+  document.getElementById("placeWarningOverlay");
+
+ const checkbox =
+  document.getElementById("dontRemindAgain");
+
+ if(!overlay || !title || !text || !checkbox){
+  console.error("Safario: place warning popup elements are missing.");
+  return;
+ }
+
+ title.textContent =
+  `${count} places for 1 day?`;
+
+ text.textContent =
+  `You've selected ${count} places for a 1-day trip. You can still continue, but this will be a very packed day.`;
+
+ checkbox.classList.toggle(
+  "checked",
+  dontRemindPackedDay===true
+ );
+
+ checkbox.setAttribute(
+  "aria-pressed",
+  String(dontRemindPackedDay===true)
+ );
+
+ overlay.classList.add("open");
+}
+
+
+function closePlaceWarning(){
+
+ const overlay =
+  document.getElementById("placeWarningOverlay");
+
+ if(overlay){
+  overlay.classList.remove("open");
+ }
+}
+
+
+function continueFromPlaceWarning(){
+
+ closePlaceWarning();
+
+ state.hotelSkipped=false;
+
+ renderHotels();
+
+ show("hotels");
+}
+
+
+loadPackedDayPreference();
+
+
 function showHotels(){
 
  /*
   Hotel selection is available for every trip length,
-  including a 1-day trip. A 1-day trip simply means
-  the stay is priced for 1 day in this prototype.
+  including a 1-day trip.
  */
+
+ updatePackedDayFeedback();
+
+ /*
+  1 day + 5 or more places:
+  show the warning popup before moving to hotels.
+  If the user selected "Don't remind me again",
+  skip the popup on future checks.
+ */
+ if(
+  Number(state.days)===1 &&
+  Number(state.places.length)>=5 &&
+  dontRemindPackedDay!==true
+ ){
+
+  openPlaceWarning();
+  return;
+ }
+
  state.hotelSkipped=false;
 
  renderHotels();
